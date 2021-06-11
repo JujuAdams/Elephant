@@ -23,6 +23,7 @@
 #macro  __ELEPHANT_POST_READ_METHOD_NAME   "__Elephant_Post_Read_Method__"
 
 #macro  ELEPHANT_IS_DESERIALIZING   global.__elephantIsDeserializing
+#macro  ELEPHANT_SCHEMA_VERSION     global.__elephantSchemeVersion
 #macro  ELEPHANT_SCHEMA             static __Elephant_Schema__ =
 #macro  ELEPHANT_PRE_WRITE_METHOD   static __Elephant_Pre_Write_Method__  = function()
 #macro  ELEPHANT_POST_WRITE_METHOD  static __Elephant_Post_Write_Method__ = function()
@@ -35,6 +36,7 @@ global.__elephantConstructorIndexes   = {};
 global.__elephantConstructorNextIndex = 0;
 global.__elephantFound                = undefined;
 global.__elephantFoundCount           = 0;
+global.__elephantSchemeVersion        = undefined;
 
 
 

@@ -41,9 +41,10 @@ function ElephantRead(_buffer)
     //Run the read function and grab whatever comes back (hopefully it's useful data!)
     var _result = global.__elephantReadFunction(_buffer, buffer_any);
     
-    ELEPHANT_IS_DESERIALIZING = false;
-    
     ds_map_destroy(global.__elephantFound);
+    
+    ELEPHANT_IS_DESERIALIZING = false;
+    ELEPHANT_SCHEMA_VERSION = undefined;
     
     return _result;
 }

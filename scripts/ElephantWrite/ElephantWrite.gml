@@ -36,6 +36,8 @@ function ElephantWrite()
     //Make sure we clear references to 
     ds_map_destroy(global.__elephantFound);
     
+    ELEPHANT_SCHEMA_VERSION = undefined;
+    
     return _buffer;
 }
 
@@ -186,10 +188,6 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                     buffer_write(_buffer, buffer_string, _instanceof); //TODO - Hash this? Make sure to use a salt too
                 }
                 
-                //Execute the pre-write callback if we can
-                var _callback = _target[$ __ELEPHANT_PRE_WRITE_METHOD_NAME];
-                if (is_method(_callback)) method(_target, _callback)();
-                
                 //Discover the latest schema version
                 var _latestVersion = 0;
                 
@@ -230,6 +228,11 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                 
                 //Write the latest version, even if it's 0
                 buffer_write(_buffer, buffer_u8, _latestVersion);
+                
+                //Execute the pre-write callback if we can
+                ELEPHANT_SCHEMA_VERSION = _latestVersion;
+                var _callback = _target[$ __ELEPHANT_PRE_WRITE_METHOD_NAME];
+                if (is_method(_callback)) method(_target, _callback)();
         
                 if (_latestVersion > 0)
                 {
@@ -267,8 +270,9 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                         ++_i;
                     }
                 }
-        
+                
                 //Execute the post-write callback if we can
+                ELEPHANT_SCHEMA_VERSION = _latestVersion;
                 var _callback = _target[$ __ELEPHANT_POST_WRITE_METHOD_NAME];
                 if (is_method(_callback)) method(_target, _callback)();
             }
