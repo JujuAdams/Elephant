@@ -25,12 +25,14 @@ function __ElephantReadInner_1_0_0(_buffer, _datatype)
             var _struct = {};
         }
         
+        //Read out the schema version used to serialize this struct
+        var _version = buffer_read(_buffer, buffer_u8);
+        
         //Execute the pre-read callback if we can
+        ELEPHANT_SCHEMA_VERSION = _version;
         var _callback = _struct[$ __ELEPHANT_PRE_READ_METHOD_NAME];
         if (is_method(_callback)) method(_struct, _callback)();
         
-        //Read out the schema version used to serialize this struct
-        var _version = buffer_read(_buffer, buffer_u8);
         if (_version > 0)
         {
             var _elephantSchemas = _struct[$ __ELEPHANT_SCHEMA_NAME];
@@ -76,6 +78,7 @@ function __ElephantReadInner_1_0_0(_buffer, _datatype)
         }
         
         //Execute the post-read callback if we can
+        ELEPHANT_SCHEMA_VERSION = _version;
         var _callback = _struct[$ __ELEPHANT_POST_READ_METHOD_NAME];
         if (is_method(_callback)) method(_struct, _callback)();
         
