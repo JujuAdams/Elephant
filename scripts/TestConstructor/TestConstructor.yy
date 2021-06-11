@@ -6,7 +6,7 @@
     "path": "Elephant.yyp",
   },
   "resourceVersion": "1.0",
-  "name": "__Test_Scripts__",
+  "name": "TestConstructor",
   "tags": [],
   "resourceType": "GMScript",
 }

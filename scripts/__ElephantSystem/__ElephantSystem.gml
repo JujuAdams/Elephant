@@ -16,11 +16,6 @@
 #macro  buffer_struct     16
 #macro  buffer_undefined  17
 
-
-
-//Leave lots of space for additional datatypes (18 -> 31)
-#macro  __ELEPHANT_CONSTRUCTOR_INDEX_START  32
-
 #macro  __ELEPHANT_SCHEMA_NAME             "__Elephant_Schema__"
 #macro  __ELEPHANT_PRE_WRITE_METHOD_NAME   "__Elephant_Pre_Write_Method__"
 #macro  __ELEPHANT_POST_WRITE_METHOD_NAME  "__Elephant_Post_Write_Method__"
@@ -37,12 +32,14 @@
 global.__elephantIsDeserializing      = false;
 global.__elephantReadFunction         = undefined;
 global.__elephantConstructorIndexes   = {};
-global.__elephantConstructorNextIndex = __ELEPHANT_CONSTRUCTOR_INDEX_START;
+global.__elephantConstructorNextIndex = 0;
+global.__elephantFound                = undefined;
+global.__elephantFoundCount           = 0;
 
 
 
 #macro  __ELEPHANT_FINGERPRINT  1129141313  //ATMC = (0x41 << 24) | (0x54 << 16) | (0x4D << 8) | (0x43)
-#macro  __ELEPHANT_BYTE_VERSION ((1 << 16) | (0 << 8) | (0))
+#macro  __ELEPHANT_BYTE_VERSION ((1 << 16) | (1 << 8) | (0))
 #macro  __ELEPHANT_VERSION      (string(__ELEPHANT_BYTE_VERSION >> 16) + "." + string((__ELEPHANT_BYTE_VERSION >> 8) & 0xFF) + "." + string(__ELEPHANT_BYTE_VERSION & 0xFF))
 #macro  __ELEPHANT_DATE         "2021-06-11"
 
@@ -83,36 +80,12 @@ function __ElephantValueToDatatype(_value)
 {
     switch(typeof(_value))
     {
-        case "struct":
-            var _instanceof = instanceof(_value);
-            if (_instanceof != "struct")
-            {
-                //This isn't a generic struct
-                
-                //Try to find a datatype index for this constructor
-                var _index = global.__elephantConstructorIndexes[$ _instanceof];
-                if (_index == undefined)
-                {
-                    //If we can't find one, return a new index
-                    //We handle what to do with a new index when we run __ElephantBufferInner() again
-                    _index = global.__elephantConstructorNextIndex;
-                    global.__elephantConstructorNextIndex++;
-                }
-                
-                return _index;
-            }
-            else
-            {
-                //This is a generic struct
-                return buffer_struct;
-            }
-        break;
-        
         case "int32":     return buffer_s32;       break;
         case "bool":      return buffer_bool;      break;
         case "number":    return buffer_f64;       break;
         case "string":    return buffer_string;    break;
         case "undefined": return buffer_undefined; break;
+        case "struct":    return buffer_struct;    break;
         
         case "array":
         case "vec3":

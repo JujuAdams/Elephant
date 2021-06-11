@@ -1,4 +1,4 @@
-function testConstructor() constructor
+function TestConstructor() constructor
 {
     a = 0;
     b = 2;
