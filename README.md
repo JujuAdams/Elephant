@@ -34,7 +34,7 @@ When using Elephant, some considerations must be taken into account:
   
 Arrays are assumed to have flexible typing, though arrays that are found to have a consistent datatype throughout are optimised automatically when serializing. Because deserialization creates structs by calling constructors with  Preferably, constructors should only set default variable values and structs shouldn't alter state outside of their scope on instantiation.
 
-**N.B. When using Elephant it is very important to ensure constructor methods are static. A non-static method cannot be serialized and will instead be set to <undefined> upon deserialization.**
+**N.B. When using Elephant it is very important to ensure constructor methods are static. A non-static method cannot be serialized and will instead be set to `undefined` upon deserialization.**
 
 &nbsp;
 
