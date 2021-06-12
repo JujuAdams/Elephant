@@ -26,10 +26,10 @@ function ElephantWrite()
     ELEPHANT_SCHEMA_VERSION   = undefined;
     
     //Do serialization here
-    buffer_write(_buffer, buffer_u32, __ELEPHANT_FINGERPRINT);
+    buffer_write(_buffer, buffer_u32, __ELEPHANT_HEADER);
     buffer_write(_buffer, buffer_u32, __ELEPHANT_BYTE_VERSION);
-    
     __ElephantBufferInner(_buffer, _target, buffer_any);
+    buffer_write(_buffer, buffer_u32, __ELEPHANT_FOOTER);
     
     if (_resize_buffer)
     {

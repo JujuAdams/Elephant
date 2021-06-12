@@ -2,13 +2,8 @@
 
 function ElephantRead(_buffer)
 {
-    if (buffer_get_size(_buffer) - buffer_tell(_buffer) < 9)
-    {
-        __ElephantError("Buffer is too small, data may be corrupted");
-    }
-    
-    var _fingerprint = buffer_read(_buffer, buffer_u32); //1129141313
-    if (_fingerprint != __ELEPHANT_FINGERPRINT) __ElephantError("Fingerprint mismatch");
+    var _header = buffer_read(_buffer, buffer_u32);
+    if (_header != __ELEPHANT_HEADER) __ElephantError("Header mismatch");
     
     global.__elephantConstructorNextIndex = 0;
     global.__elephantConstructorIndexes   = {};
@@ -41,6 +36,9 @@ function ElephantRead(_buffer)
     
     //Run the read function and grab whatever comes back (hopefully it's useful data!)
     var _result = global.__elephantReadFunction(_buffer, buffer_any);
+    
+    var _header = buffer_read(_buffer, buffer_u32);
+    if (_header != __ELEPHANT_FOOTER) __ElephantError("Footer mismatch");
     
     ds_map_destroy(global.__elephantFound);
     

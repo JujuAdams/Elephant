@@ -40,7 +40,8 @@ ELEPHANT_IS_DESERIALIZING             = undefined;
 
 
 
-#macro  __ELEPHANT_FINGERPRINT  1129141313  //ATMC = (0x41 << 24) | (0x54 << 16) | (0x4D << 8) | (0x43)
+#macro  __ELEPHANT_HEADER       0x454C4550  //ELEP
+#macro  __ELEPHANT_FOOTER       0x48414E54  //HANT
 #macro  __ELEPHANT_BYTE_VERSION ((1 << 16) | (1 << 8) | (0))
 #macro  __ELEPHANT_VERSION      (string(__ELEPHANT_BYTE_VERSION >> 16) + "." + string((__ELEPHANT_BYTE_VERSION >> 8) & 0xFF) + "." + string(__ELEPHANT_BYTE_VERSION & 0xFF))
 #macro  __ELEPHANT_DATE         "2021-06-11"
