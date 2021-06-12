@@ -1,5 +1,6 @@
 {
   "resources": [
+    {"id":{"name":"ElephantDuplicate","path":"scripts/ElephantDuplicate/ElephantDuplicate.yy",},"order":2,},
     {"id":{"name":"oTest","path":"objects/oTest/oTest.yy",},"order":1,},
     {"id":{"name":"ElephantImportString","path":"scripts/ElephantImportString/ElephantImportString.yy",},"order":4,},
     {"id":{"name":"rmMain","path":"rooms/rmMain/rmMain.yy",},"order":2,},
@@ -7,8 +8,8 @@
     {"id":{"name":"ElephantExportString","path":"scripts/ElephantExportString/ElephantExportString.yy",},"order":3,},
     {"id":{"name":"__ElephantReadInner_1_0_0","path":"scripts/__ElephantReadInner_1_0_0/__ElephantReadInner_1_0_0.yy",},"order":3,},
     {"id":{"name":"TestConstructor","path":"scripts/TestConstructor/TestConstructor.yy",},"order":3,},
-    {"id":{"name":"ElephantWrite","path":"scripts/ElephantWrite/ElephantWrite.yy",},"order":1,},
-    {"id":{"name":"ElephantRead","path":"scripts/ElephantRead/ElephantRead.yy",},"order":2,},
+    {"id":{"name":"ElephantWrite","path":"scripts/ElephantWrite/ElephantWrite.yy",},"order":0,},
+    {"id":{"name":"ElephantRead","path":"scripts/ElephantRead/ElephantRead.yy",},"order":1,},
     {"id":{"name":"TestLoop","path":"scripts/TestLoop/TestLoop.yy",},"order":4,},
     {"id":{"name":"__ElephantSystem","path":"scripts/__ElephantSystem/__ElephantSystem.yy",},"order":2,},
   ],
@@ -39,7 +40,7 @@
   ],
   "Folders": [
     {"folderPath":"folders/Elephant.yy","order":0,"resourceVersion":"1.0","name":"Elephant","tags":[],"resourceType":"GMFolder",},
-    {"folderPath":"folders/Elephant/(System).yy","order":7,"resourceVersion":"1.0","name":"(System)","tags":[],"resourceType":"GMFolder",},
+    {"folderPath":"folders/Elephant/(System).yy","order":5,"resourceVersion":"1.0","name":"(System)","tags":[],"resourceType":"GMFolder",},
     {"folderPath":"folders/Elephant/(System)/uh huh make it magnificent.yy","order":3,"resourceVersion":"1.0","name":"uh huh make it magnificent","tags":[],"resourceType":"GMFolder",},
   ],
   "AudioGroups": [
