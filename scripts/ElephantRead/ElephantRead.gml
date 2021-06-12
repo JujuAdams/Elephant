@@ -17,6 +17,7 @@ function ElephantRead(_buffer)
     global.__elephantFoundCount = 0;
     
     ELEPHANT_IS_DESERIALIZING = true;
+    ELEPHANT_SCHEMA_VERSION   = undefined;
     
     //Read the Elephant version out from the buffer, then figure out which deserialization function to run
     var _version = buffer_read(_buffer, buffer_u32);
@@ -43,8 +44,8 @@ function ElephantRead(_buffer)
     
     ds_map_destroy(global.__elephantFound);
     
-    ELEPHANT_IS_DESERIALIZING = false;
-    ELEPHANT_SCHEMA_VERSION = undefined;
+    ELEPHANT_IS_DESERIALIZING = undefined;
+    ELEPHANT_SCHEMA_VERSION   = undefined;
     
     return _result;
 }

@@ -30,13 +30,13 @@
 #macro  ELEPHANT_PRE_READ_METHOD    static __Elephant_Pre_Read_Method__   = function()
 #macro  ELEPHANT_POST_READ_METHOD   static __Elephant_Post_Read_Method__  = function()
 
-global.__elephantIsDeserializing      = false;
 global.__elephantReadFunction         = undefined;
 global.__elephantConstructorIndexes   = {};
 global.__elephantConstructorNextIndex = 0;
 global.__elephantFound                = undefined;
 global.__elephantFoundCount           = 0;
-global.__elephantSchemeVersion        = undefined;
+ELEPHANT_SCHEMA_VERSION               = undefined;
+ELEPHANT_IS_DESERIALIZING             = undefined;
 
 
 

@@ -22,6 +22,9 @@ function ElephantWrite()
     global.__elephantFound      = ds_map_create();
     global.__elephantFoundCount = 0;
     
+    ELEPHANT_IS_DESERIALIZING = false;
+    ELEPHANT_SCHEMA_VERSION   = undefined;
+    
     //Do serialization here
     buffer_write(_buffer, buffer_u32, __ELEPHANT_FINGERPRINT);
     buffer_write(_buffer, buffer_u32, __ELEPHANT_BYTE_VERSION);
@@ -36,7 +39,8 @@ function ElephantWrite()
     //Make sure we clear references to 
     ds_map_destroy(global.__elephantFound);
     
-    ELEPHANT_SCHEMA_VERSION = undefined;
+    ELEPHANT_IS_DESERIALIZING = undefined;
+    ELEPHANT_SCHEMA_VERSION   = undefined;
     
     return _buffer;
 }
