@@ -233,10 +233,11 @@ having to repeat the construcor name for every struct.
 
 
 
-Header:
-    u32   identifier   0x41544D43, the UTF-8/ASCII string "ATMC". If this is missing then the data is invalid
+Wrapper:
+    u32   header       0x454C4550 a.k.a. UTF-8/ASCII string "ELEP". If this is missing then the data is invalid
     u32   version      The version number of Elephant used to create the data. This is calculated using ((majorVersion << 16) | (minorVersion << 8) | (patchVersion))
     ---   buffer_any   A buffer_any datapoint that encodes the root value - see below
+    u32   footer       0x48414E54 a.k.a. UTF-8/ASCII string "HANT". If this is missing then the data is invalid
 
 
 
