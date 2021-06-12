@@ -224,12 +224,12 @@ Constructor indexes work in a similar way. Each constructor is given an ID when 
 
 ### Wrapper
 
-|Datatype    |Name   |Description                                                                                                                                     |
-|------------|-------|------------------------------------------------------------------------------------------------------------------------------------------------|
-|`buffer_u32`|header |`0x454C4550` a.k.a. UTF-8/ASCII string `ELEP`. If this is missing then the data is invalid                                                      |
-|`buffer_u32`|version|The version number of Elephant used to create the data. This is calculated using `((majorVersion << 16) | (minorVersion << 8) | (patchVersion))`|
-|`buffer_any`|content|The root value                                                                                                                                  |
-|`buffer_u32`|footer |`0x48414E54` a.k.a. UTF-8/ASCII string `HANT`. If this is missing then the data is invalid                                                      |
+|Datatype    |Name   |Description                                                                                                                                |
+|------------|-------|-------------------------------------------------------------------------------------------------------------------------------------------|
+|`buffer_u32`|header |`0x454C4550` a.k.a. UTF-8/ASCII string `ELEP`. If this is missing then the data is invalid                                                 |
+|`buffer_u32`|version|The version number of Elephant used to create the data. This is calculated ny `((majorVersion << 16) + (minorVersion << 8) + patchVersion)`|
+|`buffer_any`|content|The root value                                                                                                                             |
+|`buffer_u32`|footer |`0x48414E54` a.k.a. UTF-8/ASCII string `HANT`. If this is missing then the data is invalid                                                 |
 
 &nbsp;
 
