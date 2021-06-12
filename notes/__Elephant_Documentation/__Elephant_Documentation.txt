@@ -130,11 +130,14 @@ Top-level keys in a struct delineate schema versions. Versioning is critical for
 as your project develops and changes. Schema versions must start with a lowercase "v" and must be followed by a
 positive integer from 1 to 255 inclusive.
 
-  N.B. It is very important that you do not ever remove schema versions! If you remove a schema version then any
-       old files that use the old schema version cannot be recovered, which is very likely to break your project.
+    N.B. It is very important that you do not ever remove schema versions! If you remove a schema version then any
+         old files that use the old schema version cannot be recovered, which is very likely to break your project.
 
 Variables defined in a schema can take any of the following datatypes, partially shared with GameMaker's native
-constants that are used for buffer access:
+constants that are used for buffer access.
+
+    N.B. Elephant does no type checking for scalar values in the interests of speed. Please ensure that the value
+         you're serializing matches the datatype in the schema
     
      1  buffer_u8         Unsigned 8-bit integer, a positive value from 0 to 255
      2  buffer_s8         Signed 8-bit integer, a positive or negative value from -128 to 127
@@ -149,7 +152,7 @@ constants that are used for buffer access:
     11  buffer_string     String of any size, with a null terminator
     12  buffer_u64        An unsigned 64bit integer
     13  buffer_text       String of any size, with a null terminator (there is no difference between buffer_text and buffer_string)
-    14  buffer_any        Datatype can be any serializable data. This is the default when serializing data that has no schema (including arrays)
+    14  buffer_any        Datatype can be any serializable data. This is the default when serializing content in arrays or structs that have no schema
     15  buffer_array      Data is an array. Array elements themselves can be any datatype, though Elephant will optimise arrays with a consistent datatype. Arrays are limited to 65534 elements.
     16  buffer_struct     Data is a struct, either anonymous or created by a constructor. Structs are limited to 65533 member variables
     17  buffer_undefined  Undefined value, using GameMaker's <undefined> datatype. This is equivalent to <null> in JavaScript
@@ -162,10 +165,10 @@ constants that are used for buffer access:
 
 Elephant allows for the definition of callback methods per constructor. These are executed as follows:
 
-ELEPHANT_PRE_WRITE_METHOD   Executed immediately before serialization
-ELEPHANT_POST_WRITE_METHOD  Executed immediately after serialization
-ELEPHANT_PRE_READ_METHOD    Executed immediately before deserialization
-ELEPHANT_POST_READ_METHOD   Executed immediately after deserialization
+    ELEPHANT_PRE_WRITE_METHOD   Executed immediately before serialization
+    ELEPHANT_POST_WRITE_METHOD  Executed immediately after serialization
+    ELEPHANT_PRE_READ_METHOD    Executed immediately before deserialization
+    ELEPHANT_POST_READ_METHOD   Executed immediately after deserialization
 
 During the execution of callbacks, two macros can be read: ELEPHANT_SCHEMA_VERSION and ELEPHANT_IS_DESERIALIZING.
 ELEPHANT_SCHEMA_VERSION contains the schema version that is being used, whereas ELEPHANT_IS_DESERIALIZING will be
