@@ -128,12 +128,7 @@ function __ElephantReadInner_1_0_0(_buffer, _datatype)
     }
     else
     {
-        if (_datatype == buffer_text)
-        {
-            __ElephantTrace("\"buffer_text\" datatype is not usable, using \"buffer_string\" instead");
-            _datatype = buffer_string;
-        }
-            
+        if (_datatype == buffer_text) _datatype = buffer_string;
         return buffer_read(_buffer, _datatype);
     }
 }

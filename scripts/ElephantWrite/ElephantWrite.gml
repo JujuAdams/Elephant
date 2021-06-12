@@ -290,12 +290,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
     }
     else
     {
-        if (_datatype == buffer_text)
-        {
-            __ElephantTrace("\"buffer_text\" datatype is not usable, using \"buffer_string\" instead");
-            _datatype = buffer_string;
-        }
-        
+        if (_datatype == buffer_text) _datatype = buffer_string;
         buffer_write(_buffer, _datatype, _target);
     }
 }
