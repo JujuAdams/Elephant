@@ -1,4 +1,8 @@
-/// @param target
+/// As ElephantWrite(), but returns a base64-encoded string. This function also compresses the buffer.
+/// 
+/// @return base64-encoded string
+/// 
+/// @param target  Data to serialize
 
 function ElephantExportString(_target)
 {

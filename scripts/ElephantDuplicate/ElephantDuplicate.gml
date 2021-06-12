@@ -1,4 +1,10 @@
-/// @param target
+/// Makes an identical copy of the target. Unlike ElephantWrite(), this function ignores schemas and will copy
+/// all member variables and non-static methods. This function will recreate constructed structs appropriately
+/// and will also correctly duplicate circular references.
+/// 
+/// @return  A copy of the target data
+/// 
+/// @param target  Data to duplicate
 
 function ElephantDuplicate(_target)
 {

@@ -1,5 +1,13 @@
-/// @param target
-/// @param [buffer]
+/// Serializes the given target data and writes it to the given buffer, starting at the buffer_tell() position.
+/// This function uses buffer_write() and will move the buffer head as it writes. If no buffer is provided then
+/// a new buffer is created that fits the serialized data. This function calls ELEPHANT_PRE_WRITE_METHOD and
+/// ELEPHANT_POST_WRITE_METHOD for constructed structs, and ELEPHANT_IS_DESERIALIZING is set to <false>.
+/// ELEPHANT_SCHEMA_VERSION will contain the constructor schema version that Elephant is using to serialize data.
+/// 
+/// @return  Buffer, either the buffer passed into the function or a buffer the function created itself
+/// 
+/// @param target    Data to serialize
+/// @param [buffer]  Optional, the buffer to write to. If no buffer is provided then one is created automatically
 
 function ElephantWrite()
 {

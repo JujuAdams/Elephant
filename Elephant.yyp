@@ -42,7 +42,7 @@
   "Folders": [
     {"folderPath":"folders/Elephant.yy","order":0,"resourceVersion":"1.0","name":"Elephant","tags":[],"resourceType":"GMFolder",},
     {"folderPath":"folders/Elephant/(System).yy","order":6,"resourceVersion":"1.0","name":"(System)","tags":[],"resourceType":"GMFolder",},
-    {"folderPath":"folders/Elephant/(System)/uh huh make it magnificent.yy","order":3,"resourceVersion":"1.0","name":"uh huh make it magnificent","tags":[],"resourceType":"GMFolder",},
+    {"folderPath":"folders/Elephant/(System)/An elephant never forgets.yy","order":3,"resourceVersion":"1.0","name":"An elephant never forgets","tags":[],"resourceType":"GMFolder",},
   ],
   "AudioGroups": [
     {"targets":-1,"resourceVersion":"1.3","name":"audiogroup_default","resourceType":"GMAudioGroup",},

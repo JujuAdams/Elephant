@@ -1,4 +1,11 @@
-/// @param buffer
+/// Deserializes Elephant data from a buffer, starting at the buffer_tell() point. This function uses
+/// buffer_read() and will move the buffer head as it reads data. This function calls ELEPHANT_PRE_READ_METHOD
+/// and ELEPHANT_POST_READ_METHOD for constructed structs, and ELEPHANT_IS_DESERIALIZING is set to <true>.
+/// ELEPHANT_SCHEMA_VERSION will contain the constructor schema version that Elephant found in the source data.
+/// 
+/// @return  The data that was encoded
+/// 
+/// @param buffer  The buffer to read from
 
 function ElephantRead(_buffer)
 {

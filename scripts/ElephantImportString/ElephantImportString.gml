@@ -1,4 +1,8 @@
-/// @param string
+/// As ElephantRead(), but takes a string rather than a buffer as input.
+/// 
+/// @return  The data that was encoded
+/// 
+/// @param string  base64-encoded string, as created by ElephantExportString()
 
 function ElephantImportString(_string)
 {
