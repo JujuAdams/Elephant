@@ -19,7 +19,7 @@ Elephant is a struct/array serialization system that offers extended functionali
   - Circular references are stored and recreated correctly
   - Structs made with constructors are recreated using the constructor
   - Constructed structs can have schemas to control which variables are serialized and how
-  - Constructed structs can have callbacks for reading/writing
+  - Constructed structs can have read/write callbacks
 
 When using Elephant, some considerations must be taken into account:
   - Constructors must be in global scope i.e. in a script
