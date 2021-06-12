@@ -257,7 +257,7 @@ Constructor indexes work in a similar way. Each constructor is given an ID when 
 |`buffer_u16`|length  |Number of elements in the array. If this value is 0 then no datatype nor content follows. If the length is 65535 (`0xFFFF)` then special behaviour should be executed, see below|
 |`buffer_u8` |datatype|Datatype to use to deserialize following data. This can be any of the constants laid out above, including buffer_any                                                            |
 |As above    |value 0 |Value for the 0th element                                                                                                                                                       |
-|etc.        |        |                                                                                                                                                                                |
+|            |etc.    |                                                                                                                                                                                |
 
 &nbsp;
 
@@ -277,7 +277,7 @@ Constructor indexes work in a similar way. Each constructor is given an ID when 
 |`buffer_u16`   |length         |Number of member variables for this struct. If this value is 0 then no key/value pairs follow. If the length is 65535 or 65534 (`0xFFFF` or `0xFFFE`) then special behaviour should be executed, see below|
 |`buffer_string`|variable name 0|Name of the 0th member variable as a null-terminated string                                                                                                                                               |
 |`buffer_any`   |value 0        |The value of the 0th member variable                                                                                                                                                                      |
-|etc.           |               |                                                                                                                                                                                                          |
+|               |etc.           |                                                                                                                                                                                                          |
 
 &nbsp;
 
@@ -299,7 +299,7 @@ Constructor indexes work in a similar way. Each constructor is given an ID when 
 |(`buffer_string`)|(constructor name)|(If the constructor index is new then the name of the constructor function follows as a string)|
 |`buffer_u8`      |version           |The schema version that was used to serialize the content that follows                         |
 |Varies           |value 0           |Value for the 0th member variable, the name and datatype of which is determined by the schema  |
-|etc.             |                  |                                                                                               |
+|                 |etc.              |                                                                                               |
 
 &nbsp;
 
@@ -313,4 +313,4 @@ Constructor indexes work in a similar way. Each constructor is given an ID when 
 |`buffer_u8`      |version           |`0x00`. This indicates that no schema was available for the constructor at the time the data was saved|
 |`buffer_string`  |variable name 0   |Name of the 0th member variable as a null-terminated string                                           |
 |`buffer_any`     |value 0           |Value for the 0th element                                                                             |
-|etc.             |                  |                                                                                                      |
+|                 |etc.              |                                                                                                      |
