@@ -32,7 +32,7 @@ When using Elephant, some considerations must be taken into account:
 
 &nbsp;
   
-Arrays are assumed to have flexible typing, though arrays that are found to have a consistent datatype throughout are optimised automatically when serializing. Because deserialization creates structs by calling constructors with  Preferably, constructors should only set default variable values and structs shouldn't alter state outside of their scope on instantiation.
+Arrays are assumed to have flexible typing, though arrays that are found to have a consistent datatype throughout are optimised automatically when serializing. &Preferably, constructors should only set default variable values and structs shouldn't alter state outside of their scope on instantiation.
 
 **N.B. When using Elephant it is very important to ensure constructor methods are static. A non-static method cannot be serialized and will instead be set to `undefined` upon deserialization.**
 
@@ -92,7 +92,7 @@ Elephant has five public functions that can be used:
 
 Schemas may be defined for constructors by using the macro `ELEPHANT_SCHEMA` to define a struct literal. This struct literal contains schema versions as the top-level keys, and member variables names with associated datatype as second-level keys.
 
-If no schema is defined then all member variables for the struct will be serialized using the generic buffer_any datatype. This typically leads to large buffers and is much slower to both serialize and deserialize and should generally be avoided. Try to declare a schema whenever you can.
+If no schema is defined then all member variables for the struct will be serialized using the generic `buffer_any` datatype. This typically leads to large buffers and is much slower to both serialize and deserialize and should generally be avoided. Try to declare a schema whenever you can.
 
 Schemas must be defined by setting `ELEPHANT_SCHEMA` in a constructor e.g.
 
@@ -139,8 +139,8 @@ Variables defined in a schema can take any of the following datatypes, partially
 |9    |`buffer_f64`      |64-bit float                                                                                                                                                          |
 |10   |`buffer_bool`     |Boolean value, can only be 0 or 1                                                                                                                                     |
 |11   |`buffer_string`   |String of any size, with a null terminator                                                                                                                            |
-|12   |`buffer_u64`      |An unsigned 64bit integer                                                                                                                                             |
-|13   |`buffer_text`     |String of any size, with a null terminator (there is no difference between buffer_text and buffer_string)                                                             |
+|12   |`buffer_u64`      |An unsigned 64-bit integer                                                                                                                                            |
+|13   |`buffer_text`     |String of any size, with a null terminator (there is no difference between `buffer_text` and `buffer_string`)                                                         |
 |14   |`buffer_any`      |Datatype can be any serializable data. This is the default when serializing content in arrays or structs that have no schema                                          |
 |15   |`buffer_array`    |Data is an array. Array elements themselves can be any datatype, though Elephant will optimise arrays with a consistent datatype. Arrays are limited to 65534 elements|
 |16   |`buffer_struct`   |Data is a struct, either anonymous or created by a constructor. Structs are limited to 65533 member variables                                                         |
@@ -227,7 +227,7 @@ Constructor indexes work in a similar way. Each constructor is given an ID when 
 |Datatype    |Name   |Description                                                                                                                                |
 |------------|-------|-------------------------------------------------------------------------------------------------------------------------------------------|
 |`buffer_u32`|header |`0x454C4550` a.k.a. UTF-8/ASCII string `ELEP`. If this is missing then the data is invalid                                                 |
-|`buffer_u32`|version|The version number of Elephant used to create the data. This is calculated ny `((majorVersion << 16) + (minorVersion << 8) + patchVersion)`|
+|`buffer_u32`|version|The version number of Elephant used to create the data. This is calculated by `((majorVersion << 16) + (minorVersion << 8) + patchVersion)`|
 |`buffer_any`|content|The root value                                                                                                                             |
 |`buffer_u32`|footer |`0x48414E54` a.k.a. UTF-8/ASCII string `HANT`. If this is missing then the data is invalid                                                 |
 
