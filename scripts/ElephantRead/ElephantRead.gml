@@ -30,6 +30,7 @@ function ElephantRead(_buffer)
         break;
         
         case ((1 << 16) | (1 << 8) | (0)): //1.1.0
+        case ((1 << 16) | (2 << 8) | (0)): //1.2.0
             global.__elephantReadFunction = __ElephantReadInner_1_1_0;
         break;
         
