@@ -32,7 +32,7 @@ When using Elephant, some considerations must be taken into account:
 
 &nbsp;
   
-Arrays are assumed to have flexible typing, though arrays that are found to have a consistent datatype throughout are optimised automatically when serializing. &Preferably, constructors should only set default variable values and structs shouldn't alter state outside of their scope on instantiation.
+Arrays are assumed to have flexible typing, though arrays that are found to have a consistent datatype throughout are optimised automatically when serializing. Preferably, constructors should only set default variable values and structs shouldn't alter state outside of their scope on instantiation.
 
 **N.B. When using Elephant it is very important to ensure constructor methods are static. A non-static method cannot be serialized and will instead be set to `undefined` upon deserialization.**
 
@@ -144,7 +144,7 @@ Variables defined in a schema can take any of the following datatypes, partially
 |14   |`buffer_any`      |Datatype can be any serializable data. This is the default when serializing content in arrays or structs that have no schema                                          |
 |15   |`buffer_array`    |Data is an array. Array elements themselves can be any datatype, though Elephant will optimise arrays with a consistent datatype. Arrays are limited to 65534 elements|
 |16   |`buffer_struct`   |Data is a struct, either anonymous or created by a constructor. Structs are limited to 65533 member variables                                                         |
-|17   |`buffer_undefined`|Undefined value, using GameMaker's <undefined> datatype. This is equivalent to <null> in JavaScript                                                                   |
+|17   |`buffer_undefined`|Undefined value, using GameMaker's <undefined> datatype. This is equivalent to `null` in JavaScript                                                                   |
 
 &nbsp;
 
