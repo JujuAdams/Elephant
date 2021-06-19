@@ -21,6 +21,9 @@
 #macro  __ELEPHANT_POST_WRITE_METHOD_NAME  "__Elephant_Post_Write_Method__"
 #macro  __ELEPHANT_PRE_READ_METHOD_NAME    "__Elephant_Pre_Read_Method__"
 #macro  __ELEPHANT_POST_READ_METHOD_NAME   "__Elephant_Post_Read_Method__"
+#macro  __ELEPHANT_FORCE_VERSION_NAME      "__Elephant_Force_Version__"
+#macro  __ELEPHANT_VERSION_VERBOSE_NAME    "__Elephant_Version_Verbose__"
+#macro  __ELEPHANT_VERBOSE_EXCLUDE_NAME    "__Elephant_Verbose_Exclude__"
 
 #macro  ELEPHANT_IS_DESERIALIZING   global.__elephantIsDeserializing
 #macro  ELEPHANT_SCHEMA_VERSION     global.__elephantSchemeVersion
@@ -29,6 +32,9 @@
 #macro  ELEPHANT_POST_WRITE_METHOD  static __Elephant_Post_Write_Method__ = function()
 #macro  ELEPHANT_PRE_READ_METHOD    static __Elephant_Pre_Read_Method__   = function()
 #macro  ELEPHANT_POST_READ_METHOD   static __Elephant_Post_Read_Method__  = function()
+#macro  ELEPHANT_FORCE_VERSION      __Elephant_Force_Version__
+#macro  ELEPHANT_VERSION_VERBOSE    __Elephant_Version_Verbose__
+#macro  ELEPHANT_VERBOSE_EXCLUDE    __Elephant_Verbose_Exclude__
 
 global.__elephantReadFunction         = undefined;
 global.__elephantConstructorIndexes   = {};
