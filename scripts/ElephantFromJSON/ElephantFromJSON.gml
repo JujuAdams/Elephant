@@ -49,6 +49,7 @@ function __ElephantFromJSONInner(_target)
         var _names = variable_struct_get_names(_target);
         
         //Sort the names alphabetically
+        //This is important for deserializing circular references so that the indexes are always created in the same order
         array_sort(_names, lb_sort_ascending);
         
         var _i = 0;
