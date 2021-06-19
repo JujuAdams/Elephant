@@ -6,7 +6,7 @@
     "path": "folders/Elephant/(System)/An elephant never forgets.yy",
   },
   "resourceVersion": "1.0",
-  "name": "__ElephantReadInner_1_1_0",
+  "name": "__ElephantReadInner_v2",
   "tags": [],
   "resourceType": "GMScript",
 }

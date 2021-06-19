@@ -1,4 +1,4 @@
-<h1 align="center">Elephant 1.2.0</h1>
+<h1 align="center">Elephant 1.2.1</h1>
 
 <p align="center">Constructor serialization for GameMaker Studio 2.3</p>
 
