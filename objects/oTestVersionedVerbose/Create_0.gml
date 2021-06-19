@@ -7,3 +7,5 @@ buffer = ElephantWrite(struct);
 result = ElephantRead(buffer);
 
 show_debug_message(result); //Expect a = "wheee", b = 2, c = 4
+
+show_debug_message(ElephantToJSON(struct));

@@ -200,64 +200,10 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                     buffer_write(_buffer, buffer_string, _instanceof); //TODO - Hash this? Make sure to use a salt too
                 }
                 
-                //Discover the latest schema version
-                var _latestVersion = 0;
-                
                 var _elephantSchemas = _target[$ __ELEPHANT_SCHEMA_NAME];
-                if (is_struct(_elephantSchemas))
-                {
-                    if (variable_struct_exists(_elephantSchemas, __ELEPHANT_FORCE_VERSION_NAME))
-                    {
-                        _latestVersion = _elephantSchemas[$ __ELEPHANT_FORCE_VERSION_NAME];
-                        
-                        if (_latestVersion != 0) //Allow forcing to version 0
-                        {
-                            if (!variable_struct_exists(_elephantSchemas, "v" + string(_latestVersion)))
-                            {
-                                __ElephantError("Forced schema version \"", _latestVersion, "\" has no data (constructor = \"", _instanceof, "\")");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //Iterate over names inside the root of the schema struct
-                        var _names = variable_struct_get_names(_elephantSchemas);
-                        var _i = 0;
-                        repeat(array_length(_names))
-                        {
-                            var _name = _names[_i];
-                            
-                            if ((_name != __ELEPHANT_VERSION_VERBOSE_NAME)
-                            &&  (_name != __ELEPHANT_VERBOSE_EXCLUDE_NAME))
-                            {
-                                try
-                                {
-                                    //Check the first character (should only ever be "v")
-                                    if (string_char_at(_name, 1) != "v") throw -1;
-                                    
-                                    //Extract the numeric version from the remainder of the string 
-                                    var _version = real(string_delete(_name, 1, 1));
-                                    
-                                    //Check to see if the version number is between 1 and 255 (inclusive)
-                                    if ((_version < 1) || (_version > 255) || (floor(_version) != _version)) throw -2;
-                                    
-                                    //Check if we can go backwards from the version number back to the struct entry
-                                    if (_name != "v" + string(_version)) throw -3;
-                                    
-                                    //Finally, if the found version is larger than the latest version we found already, update the latest version
-                                    if (_version > _latestVersion) _latestVersion = _version;
-                                }
-                                catch(_)
-                                {
-                                    __ElephantError("Schema version tag \"", _name, "\" is invalid:\n- Schema versions must start with a lowercase \"v\" and be followed by a version number\n- The version number must be an integer from 1 to 255 inclusive\n- The version number must contain no leading zeros e.g. \"v001\" is invalid\n(constructor = \"", _instanceof, "\")");
-                                }
-                            }
-                            
-                            ++_i;
-                        }
-                    }
-                }
                 
+                //Discover the latest schema version
+                var _latestVersion = __ElephantConstructorFindLatestVersion(_elephantSchemas);
                 if (_latestVersion > 0)
                 {
                     //Get the appropriate schema
@@ -282,7 +228,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                 var _callback = _target[$ __ELEPHANT_PRE_WRITE_METHOD_NAME];
                 if (is_method(_callback)) method(_target, _callback)();
         
-                if (_latestVersion > 0)
+                if (!_verbose && (_latestVersion > 0))
                 {
                     //Get variables names, and alphabetize them
                     array_sort(_names, lb_sort_ascending);
@@ -299,36 +245,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                 else
                 {
                     //There's no specific serialization information so we write this constructor as a generic struct
-                    if (is_struct(_elephantSchemas))
-                    {
-                        //Check to see if we have an array of variables to exclude from serialization
-                        if (variable_struct_exists(_elephantSchemas, __ELEPHANT_VERBOSE_EXCLUDE_NAME))
-                        {
-                            var _excludeArray = _elephantSchemas[$ __ELEPHANT_VERBOSE_EXCLUDE_NAME];
-                            if (!is_array(_excludeArray)) __ElephantError("Verbose exclude data must be an array (datatype = ", typeof(_excludeArray), ", constructor = \"", _instanceof, "\")");
-                            
-                            var _foundLength = array_length(_names);
-                            var _i = 0;
-                            repeat(array_length(_excludeArray))
-                            {
-                                var _exclude = _excludeArray[_i];
-                                
-                                var _j = 0;
-                                repeat(_foundLength)
-                                {
-                                    if (_names[_j] == _exclude)
-                                    {
-                                        array_delete(_names, _j, 1);
-                                        break;
-                                    }
-                                    
-                                    ++_j;
-                                }
-                                
-                                ++_i;
-                            }
-                        }
-                    }
+                    __ElephantRemoveExcludedVariables(_names, _elephantSchemas);
                     
                     //Write the length (after excluding variables)
                     var _length = array_length(_names);

@@ -30,3 +30,5 @@ show_debug_message("Expect \"TestLoop\", got " + string(instanceof(data.children
 show_debug_message("Expect \"1\", got " + string(data.children[0].parent == data));
 
 copy = ElephantDuplicate(a);
+
+show_debug_message(ElephantToJSON(a));
