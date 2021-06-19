@@ -42,6 +42,9 @@ Elephant introduces a handful of macros that are useful for interacting with the
 
 Schema definition for constructors:
 - `ELEPHANT_SCHEMA`
+- `ELEPHANT_FORCE_VERSION`
+- `ELEPHANT_VERSION_VERBOSE`
+- `ELEPHANT_VERBOSE_EXCLUDE`
 
 Custom datatypes that can be used with Elephant schemas:
 - `buffer_any`
@@ -145,6 +148,94 @@ Variables defined in a schema can take any of the following datatypes, partially
 |15   |`buffer_array`    |Data is an array. Array elements themselves can be any datatype, though Elephant will optimise arrays with a consistent datatype. Arrays are limited to 65534 elements|
 |16   |`buffer_struct`   |Data is a struct, either anonymous or created by a constructor. Structs are limited to 65533 member variables                                                         |
 |17   |`buffer_undefined`|Undefined value, using GameMaker's <undefined> datatype. This is equivalent to `null` in JavaScript                                                                   |
+
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+
+# Schema Extensions
+
+Whilst Elephant will default to choosing the latest version number for serialization, the schema version to be used can be forced by setting `ELEPHANT_FORCE_VERSION` in the base `ELEPHANT_SCHEMA` struct e.g.
+
+```GML
+function Example() constructor
+{
+	x = 0;
+	y = 0;
+	
+	ELEPHANT_SCHEMA
+	{
+		ELEPHANT_FORCE_VERSION : 1, //Force Elephant to use schema v1 rather than v2
+		
+		v1 : {
+			x : buffer_f64,
+			y : buffer_f64,
+		},
+		
+		v2 : {
+			x : buffer_f32,
+			y : buffer_f32,
+		},
+	}
+	
+	static SetPosition = function(_x, _y)
+	{
+		x = _x;
+		y = _y;
+	}
+}
+```
+
+One of the main advantages of using schemas is that filesizes can be reduced, and performance increased, by storing variables without contextual information in the outputted binary data (context is instead infered by reading the schema). The trade-off is that once a schema is set up variables name and datatype cannot change.
+
+During the early development phase of your game, it's likely that the filesize and performance advantages of strict schemas are not preferable and you'd instead like to store data more loosely. By setting `ELEPHANT_VERSION_VERBOSE` to `true` in a schema definition, Elephant will instead store variables with all contextual data so that it can be more reliably read upon deserialization.
+
+**N.B.** Setting `ELEPHANT_VERSION_VERBOSE` to `true` will cause `ELEPHANT_SCHEMA_VERSION` to return `0` when deserializing.
+
+```GML
+function Example() constructor
+{
+	x = 0;
+	y = 0;
+	
+	ELEPHANT_SCHEMA
+	{
+		v1 : {
+			ELEPHANT_VERSION_VERBOSE : true, //Store data with 1) its datatype and 2) the variable name
+			x : buffer_f64,
+			y : buffer_f64,
+		},
+	}
+	
+	static SetPosition = function(_x, _y)
+	{
+		x = _x;
+		y = _y;
+	}
+}
+```
+
+For quick development, it's useful to not use schemas at all and instead specify what you *don't* want to save. Defining `ELEPHANT_VERBOSE_EXCLUDE` as an array that contains unwanted variable names (as strings) will instruct Elephant to ignore those names when saving without a schema, or when a schema version is set to verbose (see `ELEPHANT_VERSION_VERBOSE` above).
+
+```GML
+function Example() constructor
+{
+	startHP = 10;
+	hp = startHP;
+	
+	ELEPHANT_SCHEMA
+	{
+		ELEPHANT_VERBOSE_EXCLUDE : ["startHP"], //Don't serialize the starting HP
+	}
+	
+	static Damage = function(_damage)
+	{
+		hp -= _damage;
+	}
+}
+```
 
 &nbsp;
 
@@ -290,7 +381,7 @@ Constructor indexes work in a similar way. Each constructor is given an ID when 
 
 &nbsp;
 
-### `buffer_struct` constructor with schema,  length = 65534 (`0xFFFE`),  schema version > 0
+### `buffer_struct` constructor with schema,  length = 65534 (`0xFFFE`)
 
 |Datatype         |Name              |Description                                                                                    |
 |-----------------|------------------|-----------------------------------------------------------------------------------------------|
@@ -303,14 +394,14 @@ Constructor indexes work in a similar way. Each constructor is given an ID when 
 
 &nbsp;
 
-### `buffer_struct` constructor without schema,  length = 65534 (`0xFFFE`),  schema version == 0
+### `buffer_struct` verbose constructor,  length = 65534 (`0xFFFE`)
 
-|Datatype         |Name              |Description                                                                                           |
-|-----------------|------------------|------------------------------------------------------------------------------------------------------|
-|`buffer_u16`     |length            |`0xFFFE`. This indicates that the struct was instantiated using a constructor                         |
-|`buffer_u16`     |constructor index |Index of the constructor that was used to create the struct                                           |
-|(`buffer_string`)|(constructor name)|(If the constructor index is new then the name of the constructor function follows as a string)       |
-|`buffer_u8`      |version           |`0x00`. This indicates that no schema was available for the constructor at the time the data was saved|
-|`buffer_string`  |variable name 0   |Name of the 0th member variable as a null-terminated string                                           |
-|`buffer_any`     |value 0           |Value for the 0th element                                                                             |
-|                 |etc.              |                                                                                                      |
+|Datatype         |Name              |Description                                                                                    |
+|-----------------|------------------|-----------------------------------------------------------------------------------------------|
+|`buffer_u16`     |length            |`0xFFFE`. This indicates that the struct was instantiated using a constructor                  |
+|`buffer_u16`     |constructor index |Index of the constructor that was used to create the struct                                    |
+|(`buffer_string`)|(constructor name)|(If the constructor index is new then the name of the constructor function follows as a string)|
+|`buffer_u8`      |version           |`0x00`. This indicates that variable data will be enumerated verbosely                         |
+|`buffer_string`  |variable name 0   |Name of the 0th member variable as a null-terminated string                                    |
+|`buffer_any`     |value 0           |Value for the 0th element                                                                      |
+|                 |etc.              |                                                                                               |
