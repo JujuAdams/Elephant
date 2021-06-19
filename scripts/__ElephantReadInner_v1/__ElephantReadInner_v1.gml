@@ -1,4 +1,4 @@
-function __ElephantReadInner_1_0_0(_buffer, _datatype)
+function __ElephantReadInner_v1(_buffer, _datatype)
 {
     if (_datatype >= 32)
     {

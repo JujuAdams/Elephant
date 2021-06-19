@@ -12,3 +12,15 @@ function TestConstructor() constructor
         },
     }
 }
+
+function TestExclude() constructor
+{
+    a = 0;
+    b = 2;
+    c = 4;
+    
+    ELEPHANT_SCHEMA
+    {
+        verboseExclude : ["a"],
+    }
+}

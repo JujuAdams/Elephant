@@ -26,19 +26,20 @@ function ElephantRead(_buffer)
     switch(_version)
     {
         case ((1 << 16) | (0 << 8) | (0)): //1.0.0
-            global.__elephantReadFunction = __ElephantReadInner_1_0_0;
+            global.__elephantReadFunction = __ElephantReadInner_v1;
         break;
         
         case ((1 << 16) | (1 << 8) | (0)): //1.1.0
         case ((1 << 16) | (2 << 8) | (0)): //1.2.0
-            global.__elephantReadFunction = __ElephantReadInner_1_1_0;
+        case ((1 << 16) | (2 << 8) | (1)): //1.2.1
+            global.__elephantReadFunction = __ElephantReadInner_v2;
         break;
         
         default:
             var _major = _version >> 16;
             var _minor = (_version >> 8) & 0xFF;
             var _patch = _version & 0xFF
-            __ElephantError("Buffer is for version ", _major, ".", _minor, ".", _patch, " not supported, it may be a newer version\n(Found ", _version, ", we are ", __ELEPHANT_VERSION, ")");
+            __ElephantError("Buffer is for unsupported version ", _major, ".", _minor, ".", _patch, ", it may be a newer version\n(Found ", _version, ", we are ", __ELEPHANT_VERSION, ")");
         break;
     }
     

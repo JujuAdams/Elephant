@@ -1,4 +1,4 @@
-function __ElephantReadInner_1_1_0(_buffer, _datatype)
+function __ElephantReadInner_v2(_buffer, _datatype)
 {
     if (_datatype == buffer_array)
     {
