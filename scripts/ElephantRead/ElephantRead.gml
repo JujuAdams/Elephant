@@ -35,6 +35,10 @@ function ElephantRead(_buffer)
             global.__elephantReadFunction = __ElephantReadInner_v2;
         break;
         
+        case ((1 << 16) | (3 << 8) | (0)): //1.3.0
+            global.__elephantReadFunction = __ElephantReadInner_v3;
+        break;
+        
         default:
             var _major = _version >> 16;
             var _minor = (_version >> 8) & 0xFF;
