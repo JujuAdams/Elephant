@@ -1,4 +1,4 @@
-<h1 align="center">Elephant 1.2.1</h1>
+<h1 align="center">Elephant 1.3.0</h1>
 
 <p align="center">Advanced struct/array serialization for GameMaker Studio 2.3</p>
 
