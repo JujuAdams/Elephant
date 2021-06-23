@@ -121,7 +121,7 @@ function Example() constructor
 }
 ```
 
-Top-level keys in a struct delineate schema versions. Versioning is critical for writing robust code that will work as your project develops and changes. Schema versions must start with a lowercase `v` and must be followed by a positive integer from 1 to 255 inclusive.
+Top-level keys in a struct delineate schema versions. Versioning is critical for writing robust code that will work as your project develops and changes. Schema versions must start with a lowercase `v` and must be followed by a positive integer from 1 to 127 inclusive.
 
 **N.B. It is very important that you do not ever remove schema versions! If you remove a schema version then any old files that use the old schema version cannot be recovered, which is very likely to break your project.**
 
@@ -191,8 +191,6 @@ function Example() constructor
 One of the main advantages of using schemas is that filesizes can be reduced, and performance increased, by storing variables without contextual information in the outputted binary data (context is instead infered by reading the schema). The trade-off is that once a schema is set up variables name and datatype cannot change.
 
 During the early development phase of your game, it's likely that the filesize and performance advantages of strict schemas are not preferable and you'd instead like to store data more loosely. By setting `ELEPHANT_VERSION_VERBOSE` to `true` in a schema definition, Elephant will instead store variables with all contextual data so that it can be more reliably read upon deserialization.
-
-**N.B.** Setting `ELEPHANT_VERSION_VERBOSE` to `true` will cause `ELEPHANT_SCHEMA_VERSION` to return `0` when deserializing.
 
 ```GML
 function Example() constructor
@@ -388,7 +386,7 @@ Constructor indexes work in a similar way. Each constructor is given an ID when 
 |`buffer_u16`     |length            |`0xFFFE`. This indicates that the struct was instantiated using a constructor                  |
 |`buffer_u16`     |constructor index |Index of the constructor that was used to create the struct                                    |
 |(`buffer_string`)|(constructor name)|(If the constructor index is new then the name of the constructor function follows as a string)|
-|`buffer_u8`      |version           |The schema version that was used to serialize the content that follows                         |
+|`buffer_u8`      |version & verbose |The schema version that was used to serialize the content that follows. The most significant bit determines whether the struct was serialized in verbose mode. This byte should always be greater than 0|
 |Varies           |value 0           |Value for the 0th member variable, the name and datatype of which is determined by the schema  |
 |                 |etc.              |                                                                                               |
 
@@ -401,7 +399,7 @@ Constructor indexes work in a similar way. Each constructor is given an ID when 
 |`buffer_u16`     |length            |`0xFFFE`. This indicates that the struct was instantiated using a constructor                  |
 |`buffer_u16`     |constructor index |Index of the constructor that was used to create the struct                                    |
 |(`buffer_string`)|(constructor name)|(If the constructor index is new then the name of the constructor function follows as a string)|
-|`buffer_u8`      |version           |`0x00`. This indicates that variable data will be enumerated verbosely                         |
+|`buffer_u8`      |version & verbose |`0x80`. This indicates that variable data was serialized verbosely and without a schema        |
 |`buffer_string`  |variable name 0   |Name of the 0th member variable as a null-terminated string                                    |
 |`buffer_any`     |value 0           |Value for the 0th element                                                                      |
 |                 |etc.              |                                                                                               |
