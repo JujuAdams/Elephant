@@ -14,6 +14,9 @@
 //show_debug_message(instanceof(data));
 //show_debug_message(instanceof(data.a));
 
+show_debug_message("--------------------------------------------------------------------------------------------------------------------------------");
+show_debug_message(object_get_name(object_index));
+
 a = new TestLoop();
 b = new TestLoop();
 a.Add(b);
@@ -31,4 +34,5 @@ show_debug_message("Expect \"1\", got " + string(data.children[0].parent == data
 
 copy = ElephantDuplicate(a);
 
+show_debug_message("--------------------------------------------------------------------------------------------------------------------------------");
 show_debug_message(ElephantToJSON(a));
