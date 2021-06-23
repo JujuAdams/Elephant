@@ -158,8 +158,8 @@ function __ElephantConstructorFindLatestVersion(_elephantSchemas)
                         //Extract the numeric version from the remainder of the string 
                         var _version = real(string_delete(_name, 1, 1));
                         
-                        //Check to see if the version number is between 1 and 255 (inclusive)
-                        if ((_version < 1) || (_version > 255) || (floor(_version) != _version)) throw -2;
+                        //Check to see if the version number is between 1 and 127 (inclusive)
+                        if ((_version < 0x01) || (_version > 0x7F) || (floor(_version) != _version)) throw -2;
                         
                         //Check if we can go backwards from the version number back to the struct entry
                         if (_name != "v" + string(_version)) throw -3;

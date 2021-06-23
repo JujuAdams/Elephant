@@ -220,8 +220,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                 }
                 
                 //Write the latest version and whether we're in verbose mode
-                buffer_write(_buffer, buffer_u8, _latestVersion);
-                buffer_write(_buffer, buffer_bool, _verbose);
+                buffer_write(_buffer, buffer_u8, (_verbose << 7) | (_latestVersion & 0x7F));
                 
                 //Execute the pre-write callback if we can
                 ELEPHANT_SCHEMA_VERSION = _latestVersion;

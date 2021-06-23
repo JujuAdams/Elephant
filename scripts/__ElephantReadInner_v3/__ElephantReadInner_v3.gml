@@ -77,8 +77,9 @@ function __ElephantReadInner_v3(_buffer, _datatype)
             global.__elephantFoundCount++;
             
             //Read out the schema version used to serialize this struct and whether it was stored verbosely
-            var _version = buffer_read(_buffer, buffer_u8);
-            var _verbose = buffer_read(_buffer, buffer_bool);
+            var _version_and_verbose = buffer_read(_buffer, buffer_u8);
+            var _verbose = (_version_and_verbose >> 7);
+            var _version = (_version_and_verbose & 0x7F);
             
             //Execute the pre-read callback if we can
             ELEPHANT_SCHEMA_VERSION = _version;
