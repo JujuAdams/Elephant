@@ -1,3 +1,7 @@
+/// Makes a copy of a struct/array JSON, respecting Elephant schemas, circular references, and constructors.
+/// 
+/// @return Struct/array JSON
+/// 
 /// @param target  Data to serialize
 
 function ElephantToJSON(_target)

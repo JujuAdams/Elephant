@@ -1,3 +1,7 @@
+/// Unpacks a struct/array JSON created by ElephantToJSON(), respecting Elephant schemas, constructors, and circular references.
+/// 
+/// @return  The data that was encoded
+/// 
 /// @param  target
 
 function ElephantFromJSON(_target)
