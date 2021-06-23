@@ -219,30 +219,16 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                     var _verbose = true;
                 }
                 
-                //Write the latest version
-                //If we're in verbose mode, write a 0 instead
-                buffer_write(_buffer, buffer_u8, _verbose? 0 : _latestVersion);
+                //Write the latest version and whether we're in verbose mode
+                buffer_write(_buffer, buffer_u8, _latestVersion);
+                buffer_write(_buffer, buffer_bool, _verbose);
                 
                 //Execute the pre-write callback if we can
                 ELEPHANT_SCHEMA_VERSION = _latestVersion;
                 var _callback = _target[$ __ELEPHANT_PRE_WRITE_METHOD_NAME];
                 if (is_method(_callback)) method(_target, _callback)();
         
-                if (!_verbose && (_latestVersion > 0))
-                {
-                    //Get variables names, and alphabetize them
-                    array_sort(_names, lb_sort_ascending);
-            
-                    //Iterate over the serializable variable names and write them
-                    var _i = 0;
-                    repeat(array_length(_names))
-                    {
-                        var _name = _names[_i];
-                        __ElephantBufferInner(_buffer, _target[$ _name], _schema[$ _name]);
-                        ++_i;
-                    }
-                }
-                else
+                if (_verbose)
                 {
                     //There's no specific serialization information so we write this constructor as a generic struct
                     __ElephantRemoveExcludedVariables(_names, _elephantSchemas);
@@ -259,6 +245,20 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                         buffer_write(_buffer, buffer_string, _name);
                         __ElephantBufferInner(_buffer, _target[$ _name], buffer_any);
                         
+                        ++_i;
+                    }
+                }
+                else
+                {
+                    //Alphabetize the variables names so that they'll match the order that they will be deserialized
+                    array_sort(_names, lb_sort_ascending);
+            
+                    //Iterate over the serializable variable names and write them
+                    var _i = 0;
+                    repeat(array_length(_names))
+                    {
+                        var _name = _names[_i];
+                        __ElephantBufferInner(_buffer, _target[$ _name], _schema[$ _name]);
                         ++_i;
                     }
                 }

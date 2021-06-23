@@ -76,15 +76,27 @@ function __ElephantReadInner_v3(_buffer, _datatype)
             global.__elephantFound[? global.__elephantFoundCount] = _struct;
             global.__elephantFoundCount++;
             
-            //Read out the schema version used to serialize this struct
+            //Read out the schema version used to serialize this struct and whether it was stored verbosely
             var _version = buffer_read(_buffer, buffer_u8);
+            var _verbose = buffer_read(_buffer, buffer_bool);
             
             //Execute the pre-read callback if we can
             ELEPHANT_SCHEMA_VERSION = _version;
             var _callback = _struct[$ __ELEPHANT_PRE_READ_METHOD_NAME];
             if (is_method(_callback)) method(_struct, _callback)();
             
-            if (_version > 0)
+            if (_verbose)
+            {
+                var _length = buffer_read(_buffer, buffer_u16);
+                var _i = 0;
+                repeat(_length)
+                {
+                    var _name = buffer_read(_buffer, buffer_string);
+                    _struct[$ _name] = global.__elephantReadFunction(_buffer, buffer_any);
+                    ++_i;
+                }
+            }
+            else
             {
                 var _elephantSchemas = _struct[$ __ELEPHANT_SCHEMA_NAME];
                 if (is_struct(_elephantSchemas))
@@ -92,11 +104,11 @@ function __ElephantReadInner_v3(_buffer, _datatype)
                     var _schema = _elephantSchemas[$ "v" + string(_version)];
                     if (is_struct(_schema))
                     {
-                        //Get variables names, and alphabetize them
+                        //Get variables names, and alphabetize them so that they match the order that they were serialized
                         var _names = variable_struct_get_names(_schema);
                         array_sort(_names, lb_sort_ascending);
                         
-                        //Iterate over the serializable variable names and read them
+                        //Iterate over the variable names and read them
                         var _i = 0;
                         repeat(array_length(_names))
                         {
@@ -113,18 +125,6 @@ function __ElephantReadInner_v3(_buffer, _datatype)
                 else
                 {
                     __ElephantError("No Elephant schema found for constructor \"", _instanceof, "\", but a schema is required for importing");
-                }
-            }
-            else
-            {
-                //If the version was 0 (i.e. no serialization data available for the constructor) then all data has been stored with explicit key names
-                var _length = buffer_read(_buffer, buffer_u16);
-                var _i = 0;
-                repeat(_length)
-                {
-                    var _name = buffer_read(_buffer, buffer_string);
-                    _struct[$ _name] = global.__elephantReadFunction(_buffer, buffer_any);
-                    ++_i;
                 }
             }
             
