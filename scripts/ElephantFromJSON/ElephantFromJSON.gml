@@ -50,6 +50,8 @@ function __ElephantFromJSONInner(_target)
             var _struct = {};
         }
         
+        global.__elephantFound[? ds_map_size(global.__elephantFound)] = _struct;
+        
         var _names = variable_struct_get_names(_target);
         
         //Sort the names alphabetically
