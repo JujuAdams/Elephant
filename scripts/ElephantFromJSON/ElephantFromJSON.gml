@@ -6,9 +6,41 @@
 
 function ElephantFromJSON(_target)
 {
-    global.__elephantFound = ds_map_create();
+    global.__elephantFound      = ds_map_create();
+    global.__elephantFoundCount = 0;
+    
+    global.__elephantPostReadCallbackOrder   = ds_list_create();
+    global.__elephantPostReadCallbackVersion = ds_list_create();
+    
+    ELEPHANT_IS_DESERIALIZING = true;
+    ELEPHANT_SCHEMA_VERSION   = undefined;
+    
     var _duplicate = __ElephantFromJSONInner(_target);
+    
+    //Now execute post-read callbacks in the order that the structs were created
+    var _i = 0;
+    repeat(ds_list_size(global.__elephantPostReadCallbackOrder))
+    {
+        with(global.__elephantPostReadCallbackOrder[| _i])
+        {
+            //Execute the post-read callback if we can
+            if (variable_struct_exists(self, __ELEPHANT_POST_READ_METHOD_NAME))
+            {
+                ELEPHANT_SCHEMA_VERSION = global.__elephantPostReadCallbackVersion[| _i];
+                self[$ __ELEPHANT_POST_READ_METHOD_NAME]();
+            }
+        }
+        
+        ++_i;
+    }
+    
     ds_map_destroy(global.__elephantFound);
+    
+    ds_list_destroy(global.__elephantPostReadCallbackOrder);
+    ds_list_destroy(global.__elephantPostReadCallbackVersion);
+    
+    ELEPHANT_IS_DESERIALIZING = undefined;
+    ELEPHANT_SCHEMA_VERSION   = undefined;
     
     return _duplicate;
 }
@@ -43,14 +75,26 @@ function __ElephantFromJSONInner(_target)
             {
                 __ElephantError("Could not resolve constructor function \"", _instanceof, "\"");
             }
+            
+            //Execute the pre-read callback if we can
+            ELEPHANT_SCHEMA_VERSION = _version;
+            var _callback = _struct[$ __ELEPHANT_PRE_READ_METHOD_NAME];
+            if (is_method(_callback)) method(_struct, _callback)();
+            
+            //Add this struct to our lists so we can call its post-read method later
+            ds_list_add(global.__elephantPostReadCallbackOrder,   _struct);
+            ds_list_add(global.__elephantPostReadCallbackVersion, _version);
         }
         else
         {
             //Generic struct
-            var _struct = {};
+            var _struct  = {};
+            var _version = undefined;
         }
         
-        global.__elephantFound[? ds_map_size(global.__elephantFound)] = _struct;
+        //Store a reference to this struct so if we see a circular reference later we can reconstruct it
+        global.__elephantFound[? global.__elephantFoundCount] = _struct;
+        global.__elephantFoundCount++;
         
         var _names = variable_struct_get_names(_target);
         
@@ -77,7 +121,8 @@ function __ElephantFromJSONInner(_target)
         var _length = array_length(_target);
         var _array = array_create(_length);
         
-        global.__elephantFound[? ds_map_size(global.__elephantFound)] = _array;
+        global.__elephantFound[? global.__elephantFoundCount] = _array;
+        global.__elephantFoundCount++;
         
         var _i = 0;
         repeat(_length)

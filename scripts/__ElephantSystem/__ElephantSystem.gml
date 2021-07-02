@@ -52,9 +52,9 @@ ELEPHANT_IS_DESERIALIZING             = undefined;
 
 #macro  __ELEPHANT_HEADER       0x454C4550  //ELEP
 #macro  __ELEPHANT_FOOTER       0x48414E54  //HANT
-#macro  __ELEPHANT_BYTE_VERSION ((1 << 16) | (3 << 8) | (0))
+#macro  __ELEPHANT_BYTE_VERSION ((1 << 16) | (4 << 8) | (0))
 #macro  __ELEPHANT_VERSION      (string(__ELEPHANT_BYTE_VERSION >> 16) + "." + string((__ELEPHANT_BYTE_VERSION >> 8) & 0xFF) + "." + string(__ELEPHANT_BYTE_VERSION & 0xFF))
-#macro  __ELEPHANT_DATE         "2021-06-23"
+#macro  __ELEPHANT_DATE         "2021-07-02"
 
 __ElephantTrace("Welcome to Elephant by @jujuadams! This is version " + string(__ELEPHANT_VERSION) + ", " + string(__ELEPHANT_DATE));
 

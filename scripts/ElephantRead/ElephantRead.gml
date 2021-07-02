@@ -18,6 +18,9 @@ function ElephantRead(_buffer)
     global.__elephantFound      = ds_map_create();
     global.__elephantFoundCount = 0;
     
+    global.__elephantPostReadCallbackOrder   = ds_list_create();
+    global.__elephantPostReadCallbackVersion = ds_list_create();
+    
     ELEPHANT_IS_DESERIALIZING = true;
     ELEPHANT_SCHEMA_VERSION   = undefined;
     
@@ -39,6 +42,27 @@ function ElephantRead(_buffer)
             global.__elephantReadFunction = __ElephantReadInner_v3;
         break;
         
+        case ((1 << 16) | (4 << 8) | (0)): //1.4.0
+            global.__elephantReadFunction = __ElephantReadInner_v4;
+            
+            //Now execute post-read callbacks in the order that the structs were created
+            var _i = 0;
+            repeat(ds_list_size(global.__elephantPostReadCallbackOrder))
+            {
+                with(global.__elephantPostReadCallbackOrder[| _i])
+                {
+                    //Execute the post-read callback if we can
+                    if (variable_struct_exists(self, __ELEPHANT_POST_READ_METHOD_NAME))
+                    {
+                        ELEPHANT_SCHEMA_VERSION = global.__elephantPostReadCallbackVersion[| _i];
+                        self[$ __ELEPHANT_POST_READ_METHOD_NAME]();
+                    }
+                }
+                
+                ++_i;
+            }
+        break;
+        
         default:
             var _major = _version >> 16;
             var _minor = (_version >> 8) & 0xFF;
@@ -54,6 +78,7 @@ function ElephantRead(_buffer)
     if (_header != __ELEPHANT_FOOTER) __ElephantError("Footer mismatch");
     
     ds_map_destroy(global.__elephantFound);
+    ds_list_destroy(global.__elephantPostReadCallbackOrder);
     
     ELEPHANT_IS_DESERIALIZING = undefined;
     ELEPHANT_SCHEMA_VERSION   = undefined;

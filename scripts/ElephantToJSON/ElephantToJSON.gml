@@ -6,9 +6,18 @@
 
 function ElephantToJSON(_target)
 {
-    global.__elephantFound = ds_map_create();
+    global.__elephantFound      = ds_map_create();
+    global.__elephantFoundCount = 0;
+    
+    ELEPHANT_IS_DESERIALIZING = false;
+    ELEPHANT_SCHEMA_VERSION   = undefined;
+    
     var _duplicate = __ElephantToJSONInner(_target);
+    
     ds_map_destroy(global.__elephantFound);
+    
+    ELEPHANT_IS_DESERIALIZING = undefined;
+    ELEPHANT_SCHEMA_VERSION   = undefined;
     
     return _duplicate;
 }
@@ -26,7 +35,8 @@ function __ElephantToJSONInner(_target)
         }
         else
         {
-            global.__elephantFound[? _target] = ds_map_size(global.__elephantFound);
+            global.__elephantFound[? _target] = global.__elephantFoundCount;
+            global.__elephantFoundCount++;
             
             var _instanceof = instanceof(_target);
             if (_instanceof == "struct")
