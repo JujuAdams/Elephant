@@ -6,13 +6,12 @@
 
 function ElephantToJSON(_target)
 {
-    global.__elephantFound      = ds_map_create();
-    global.__elephantFoundCount = 0;
+    global.__elephantFound = ds_map_create();
     
     ELEPHANT_IS_DESERIALIZING = false;
     ELEPHANT_SCHEMA_VERSION   = undefined;
     
-    var _duplicate = __ElephantToJSONInner(_target);
+    var _duplicate = __ElephantToJSONInner(_target, "");
     
     ds_map_destroy(global.__elephantFound);
     
@@ -22,7 +21,7 @@ function ElephantToJSON(_target)
     return _duplicate;
 }
 
-function __ElephantToJSONInner(_target)
+function __ElephantToJSONInner(_target, _longName)
 {
     if (is_struct(_target))
     {
@@ -35,8 +34,7 @@ function __ElephantToJSONInner(_target)
         }
         else
         {
-            global.__elephantFound[? _target] = global.__elephantFoundCount;
-            global.__elephantFoundCount++;
+            global.__elephantFound[? _target] = _longName;
             
             var _instanceof = instanceof(_target);
             if (_instanceof == "struct")
@@ -87,7 +85,7 @@ function __ElephantToJSONInner(_target)
             repeat(_length)
             {
                 var _name = _names[_i];
-                _duplicate[$ _name] = __ElephantToJSONInner(_target[$ _name]);
+                _duplicate[$ _name] = __ElephantToJSONInner(_target[$ _name], _longName + "." + _name);
                 ++_i;
             }
             
@@ -112,14 +110,14 @@ function __ElephantToJSONInner(_target)
         }
         else
         {
-            global.__elephantFound[? _target] = ds_map_size(global.__elephantFound);
+            global.__elephantFound[? _target] = _longName;
             
             var _length = array_length(_target);
             var _duplicate = array_create(_length);
             var _i = 0;
             repeat(_length)
             {
-                _duplicate[@ _i] = __ElephantToJSONInner(_target[_i]);
+                _duplicate[@ _i] = __ElephantToJSONInner(_target[_i], _longName + "[" + string(_i) + "]");
                 ++_i;
             }
         }

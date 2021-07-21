@@ -6,8 +6,8 @@
 
 function ElephantFromJSON(_target)
 {
-    global.__elephantFound      = ds_map_create();
-    global.__elephantFoundCount = 0;
+    global.__elephantFound = ds_map_create();
+    if (ELEPHANT_FROM_JSON_ACCEPT_LEGACY_CIRCULAR_REFERENCE) global.__elephantFoundCount = 0;
     
     global.__elephantPostReadCallbackOrder   = ds_list_create();
     global.__elephantPostReadCallbackVersion = ds_list_create();
@@ -15,7 +15,7 @@ function ElephantFromJSON(_target)
     ELEPHANT_IS_DESERIALIZING = true;
     ELEPHANT_SCHEMA_VERSION   = undefined;
     
-    var _duplicate = __ElephantFromJSONInner(_target);
+    var _duplicate = __ElephantFromJSONInner(_target, "");
     
     //Now execute post-read callbacks in the order that the structs were created
     var _i = 0;
@@ -45,7 +45,7 @@ function ElephantFromJSON(_target)
     return _duplicate;
 }
 
-function __ElephantFromJSONInner(_target)
+function __ElephantFromJSONInner(_target, _longName)
 {
     if (is_struct(_target))
     {
@@ -93,8 +93,13 @@ function __ElephantFromJSONInner(_target)
         }
         
         //Store a reference to this struct so if we see a circular reference later we can reconstruct it
-        global.__elephantFound[? global.__elephantFoundCount] = _struct;
-        global.__elephantFoundCount++;
+        global.__elephantFound[? _longName] = _struct;
+        
+        if (ELEPHANT_FROM_JSON_ACCEPT_LEGACY_CIRCULAR_REFERENCE)
+        {
+            global.__elephantFound[? global.__elephantFoundCount] = _struct;
+            global.__elephantFoundCount++;
+        }
         
         var _names = variable_struct_get_names(_target);
         
@@ -108,7 +113,7 @@ function __ElephantFromJSONInner(_target)
             var _name = _names[_i];
             if ((_name != __ELEPHANT_JSON_CONSTRUCTOR) && (_name != __ELEPHANT_JSON_SCHEMA_VERSION))
             {
-                _struct[$ _name] = __ElephantFromJSONInner(_target[$ _name]);
+                _struct[$ _name] = __ElephantFromJSONInner(_target[$ _name], _longName + "." + _name);
             }
             
             ++_i;
@@ -121,13 +126,19 @@ function __ElephantFromJSONInner(_target)
         var _length = array_length(_target);
         var _array = array_create(_length);
         
-        global.__elephantFound[? global.__elephantFoundCount] = _array;
-        global.__elephantFoundCount++;
+        //Store a reference to this struct so if we see a circular reference later we can reconstruct it
+        global.__elephantFound[? _longName] = _array;
+        
+        if (ELEPHANT_FROM_JSON_ACCEPT_LEGACY_CIRCULAR_REFERENCE)
+        {
+            global.__elephantFound[? global.__elephantFoundCount] = _array;
+            global.__elephantFoundCount++;
+        }
         
         var _i = 0;
         repeat(_length)
         {
-            _array[@ _i] = __ElephantFromJSONInner(_target[_i]);
+            _array[@ _i] = __ElephantFromJSONInner(_target[_i], _longName + "[" + string(_i) + "]");
             ++_i;
         }
         
