@@ -79,6 +79,7 @@ function ElephantRead(_buffer)
     
     ds_map_destroy(global.__elephantFound);
     ds_list_destroy(global.__elephantPostReadCallbackOrder);
+    ds_list_destroy(global.__elephantPostReadCallbackVersion);
     
     ELEPHANT_IS_DESERIALIZING = undefined;
     ELEPHANT_SCHEMA_VERSION   = undefined;
