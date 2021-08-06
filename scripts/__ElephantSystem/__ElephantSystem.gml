@@ -205,6 +205,7 @@ function __ElephantRemoveExcludedVariables(_names, _elephantSchemas)
                     if (_names[_j] == _exclude)
                     {
                         array_delete(_names, _j, 1);
+                        --_foundLength;
                         break;
                     }
                     
