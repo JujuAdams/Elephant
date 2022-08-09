@@ -6,9 +6,20 @@
 
 function ElephantToJSON(_target)
 {
-    global.__elephantFound = ds_map_create();
+    global.__elephantFound      = ds_map_create();
+    global.__elephantFoundCount = 0;
+	if ELEPHANT_WRITE_DIFFS_ONLY{global.__elephantTemplates = ds_map_create();}
+    
+    ELEPHANT_IS_DESERIALIZING = false;
+    ELEPHANT_SCHEMA_VERSION   = undefined;
+    
     var _duplicate = __ElephantToJSONInner(_target);
+    
     ds_map_destroy(global.__elephantFound);
+	if ELEPHANT_WRITE_DIFFS_ONLY{ds_map_destroy(global.__elephantTemplates);}
+    
+    ELEPHANT_IS_DESERIALIZING = undefined;
+    ELEPHANT_SCHEMA_VERSION   = undefined;
     
     return _duplicate;
 }
@@ -26,8 +37,11 @@ function __ElephantToJSONInner(_target)
         }
         else
         {
-            global.__elephantFound[? _target] = ds_map_size(global.__elephantFound);
+            global.__elephantFound[? _target] = global.__elephantFoundCount;
+            global.__elephantFoundCount++;
             
+			var _hastemplate = false,
+				_template = undefined;
             var _instanceof = instanceof(_target);
             if (_instanceof == "struct")
             {
@@ -65,6 +79,27 @@ function __ElephantToJSONInner(_target)
                 if (is_method(_callback)) method(_target, _callback)();
                 
                 if (_verbose) __ElephantRemoveExcludedVariables(_names, _elephantSchemas);
+				
+				if ELEPHANT_WRITE_DIFFS_ONLY{
+					//get the template for a blank version of this struct
+					if !ds_map_exists(global.__elephantTemplates,_instanceof){
+						var _constructorFunction = asset_get_index(_instanceof);
+			            if (is_method(_constructorFunction))
+			            {
+			                //Is a method
+			                _template = new _constructorFunction();
+			            }
+			            else if (is_numeric(_constructorFunction) && script_exists(_constructorFunction))
+			            {
+			                //Is a script
+			                _template = new _constructorFunction();
+			            }
+						ds_map_add(global.__elephantTemplates,_instanceof,_template);
+					}else{
+						_template = global.__elephantTemplates[?_instanceof];	
+					}
+				_hastemplate = true;
+				}
             }
             
             //Sort the names alphabetically
@@ -77,7 +112,10 @@ function __ElephantToJSONInner(_target)
             repeat(_length)
             {
                 var _name = _names[_i];
-                _duplicate[$ _name] = __ElephantToJSONInner(_target[$ _name]);
+				//Serialize this entry only if it differs from the template
+				if !ELEPHANT_WRITE_DIFFS_ONLY or !_hastemplate or (_target[$ _name]!=_template[$ _name]){
+					_duplicate[$ _name] = __ElephantToJSONInner(_target[$ _name]);
+				}
                 ++_i;
             }
             

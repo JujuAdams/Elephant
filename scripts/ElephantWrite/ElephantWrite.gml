@@ -29,7 +29,8 @@ function ElephantWrite()
     
     global.__elephantFound      = ds_map_create();
     global.__elephantFoundCount = 0;
-    
+    if ELEPHANT_WRITE_DIFFS_ONLY{global.__elephantTemplates = ds_map_create();}
+	
     ELEPHANT_IS_DESERIALIZING = false;
     ELEPHANT_SCHEMA_VERSION   = undefined;
     
@@ -44,9 +45,9 @@ function ElephantWrite()
         buffer_resize(_buffer, buffer_tell(_buffer));
     }
     
-    //Make sure we clear references to 
+    //Make sure we clear references too
     ds_map_destroy(global.__elephantFound);
-    
+    if ELEPHANT_WRITE_DIFFS_ONLY{ds_map_destroy(global.__elephantTemplates);}
     ELEPHANT_IS_DESERIALIZING = undefined;
     ELEPHANT_SCHEMA_VERSION   = undefined;
     
@@ -221,6 +222,39 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                 
                 //Write the latest version and whether we're in verbose mode
                 buffer_write(_buffer, buffer_u8, (_verbose << 7) | (_latestVersion & 0x7F));
+				
+				//get the template for a blank version of this struct
+				if ELEPHANT_WRITE_DIFFS_ONLY{
+					var _template = undefined;
+					if !ds_map_exists(global.__elephantTemplates,_instanceof){
+						var _constructorFunction = asset_get_index(_instanceof);
+			            if (is_method(_constructorFunction))
+			            {
+			                //Is a method
+			                _template = new _constructorFunction();
+			            }
+			            else if (is_numeric(_constructorFunction) && script_exists(_constructorFunction))
+			            {
+			                //Is a script
+			                _template = new _constructorFunction();
+			            }
+						ds_map_add(global.__elephantTemplates,_instanceof,_template);
+					}else{
+						_template = global.__elephantTemplates[?_instanceof];	
+					}
+					
+					//remove members whose content matches the template
+					var _i = 0;
+                    repeat(array_length(_names))
+                    {
+                        var _name = _names[_i];
+						if (_target[$ _name]==_template[$ _name]){
+	                        array_delete(_names,_i,1);
+						}else{
+							++_i;
+						}
+                    }
+				}
                 
                 //Execute the pre-write callback if we can
                 ELEPHANT_SCHEMA_VERSION = _latestVersion;
@@ -241,9 +275,8 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                     repeat(_length)
                     {
                         var _name = _names[_i];
-                        buffer_write(_buffer, buffer_string, _name);
-                        __ElephantBufferInner(_buffer, _target[$ _name], buffer_any);
-                        
+	                    buffer_write(_buffer, buffer_string, _name);
+	                    __ElephantBufferInner(_buffer, _target[$ _name], buffer_any);
                         ++_i;
                     }
                 }
@@ -257,7 +290,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                     repeat(array_length(_names))
                     {
                         var _name = _names[_i];
-                        __ElephantBufferInner(_buffer, _target[$ _name], _schema[$ _name]);
+						__ElephantBufferInner(_buffer, _target[$ _name], _schema[$ _name]);
                         ++_i;
                     }
                 }

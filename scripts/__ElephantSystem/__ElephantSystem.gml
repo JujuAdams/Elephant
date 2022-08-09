@@ -25,6 +25,11 @@
 #macro  __ELEPHANT_VERSION_VERBOSE_NAME    "__Elephant_Version_Verbose__"
 #macro  __ELEPHANT_VERBOSE_EXCLUDE_NAME    "__Elephant_Verbose_Exclude__"
 
+//When TRUE, Elephant's Write behavior changes so that it writes only struct values that differ from the constructor defaults
+//This adds some extra logic to the write process, but it can create output that is much smaller
+//This also allow you to change default constuctor values later in development and have previous exports update correctly without using version schema
+#macro ELEPHANT_WRITE_DIFFS_ONLY true
+
 #macro __ELEPHANT_JSON_CIRCULAR_REF    "__Elephant_Circular_Ref__"
 #macro __ELEPHANT_JSON_CONSTRUCTOR     "__Elephant_Constructor__"
 #macro __ELEPHANT_JSON_SCHEMA_VERSION  "__Elephant_Schema_Version__"
@@ -45,6 +50,7 @@ global.__elephantConstructorIndexes   = {};
 global.__elephantConstructorNextIndex = 0;
 global.__elephantFound                = undefined;
 global.__elephantFoundCount           = 0;
+global.__elephantTemplates			  = undefined; 
 ELEPHANT_SCHEMA_VERSION               = undefined;
 ELEPHANT_IS_DESERIALIZING             = undefined;
 
