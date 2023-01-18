@@ -239,18 +239,6 @@ function __ElephantBufferInner(_buffer, _target, _datatype, _diffsOnly)
                     var _verbose = true;
                 }
                 
-                if (is_struct(_diffTemplate))
-                {
-                    //Remove any variables that we don't need to write because they're not different to the diff template
-                    var _i = 0;
-                    repeat(array_length(_names))
-                    {
-                        var _name = _names[_i];
-                        if (_diffTemplate[$ _name] == _target[$ _name]) array_delete(_names, _i, 1);
-                        ++_i;
-                    }
-                }
-                
                 //Write the latest version and whether we're in verbose mode
                 buffer_write(_buffer, buffer_u8, (_verbose << 7) | (_latestVersion & 0x7F));
                 
@@ -263,6 +251,24 @@ function __ElephantBufferInner(_buffer, _target, _datatype, _diffsOnly)
                 {
                     //There's no specific serialization information so we write this constructor as a generic struct
                     __ElephantRemoveExcludedVariables(_names, _elephantSchemas);
+                    
+                    //Remove any variable names that we don't need to write because they're not different to the diff template
+                    if (is_struct(_diffTemplate))
+                    {
+                        var _i = 0;
+                        repeat(array_length(_names))
+                        {
+                            var _name = _names[_i];
+                            if (_diffTemplate[$ _name] == _target[$ _name])
+                            {
+                                array_delete(_names, _i, 1);
+                            }
+                            else
+                            {
+                                ++_i;
+                            }
+                        }
+                    }
                     
                     //Write the length (after excluding variables)
                     var _length = array_length(_names);
@@ -283,13 +289,34 @@ function __ElephantBufferInner(_buffer, _target, _datatype, _diffsOnly)
                 {
                     //Alphabetize the variables names so that they'll match the order that they will be deserialized
                     array_sort(_names, true);
-            
+                    
+                    //Nullify any variable names that we don't need to write because they're not different to the diff template
+                    //We also write which variables we've skipped so that the deserializer doesn't get confused
+                    if (is_struct(_diffTemplate))
+                    {
+                        var _i = 0;
+                        repeat(array_length(_names))
+                        {
+                            var _name = _names[_i];
+                            if (_diffTemplate[$ _name] == _target[$ _name])
+                            {
+                                _names[@ _i] = undefined;
+                                buffer_write(_buffer, buffer_u16, _i+1); //Off by one so we can reference index 0 but also stil have a null terminator
+                            }
+                            
+                            ++_i;
+                        }
+                    }
+                    
+                    //Null-terminator for the list of removed name indexes
+                    buffer_write(_buffer, buffer_u16, 0x0000);
+                    
                     //Iterate over the serializable variable names and write them
                     var _i = 0;
                     repeat(array_length(_names))
                     {
                         var _name = _names[_i];
-                        __ElephantBufferInner(_buffer, _target[$ _name], _schema[$ _name], _diffsOnly);
+                        if (_name != undefined) __ElephantBufferInner(_buffer, _target[$ _name], _schema[$ _name], _diffsOnly);
                         ++_i;
                     }
                 }
