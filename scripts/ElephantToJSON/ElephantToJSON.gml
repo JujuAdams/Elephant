@@ -2,18 +2,23 @@
 /// 
 /// @return Struct/array JSON
 /// 
-/// @param target  Data to serialize
+/// @param target       Data to serialize
+/// @param [diffsOnly]  Optional, whether to only write diffs. If no value is provided then this defaults to ELEPHANT_DEFAULT_WRITE_DIFFS_ONLY
 
-function ElephantToJSON(_target)
+function ElephantToJSON(_target, _diffsOnly = ELEPHANT_DEFAULT_WRITE_DIFFS_ONLY)
 {
     global.__elephantFound = ds_map_create();
+    
+    global.__elephantTemplates = {};
     
     ELEPHANT_IS_DESERIALIZING = false;
     ELEPHANT_SCHEMA_VERSION   = undefined;
     
-    var _duplicate = __ElephantToJSONInner(_target, "");
+    var _duplicate = __ElephantToJSONInner(_target, "", _diffsOnly);
     
     ds_map_destroy(global.__elephantFound);
+    
+    global.__elephantTemplates = undefined;
     
     ELEPHANT_IS_DESERIALIZING = undefined;
     ELEPHANT_SCHEMA_VERSION   = undefined;
@@ -21,7 +26,7 @@ function ElephantToJSON(_target)
     return _duplicate;
 }
 
-function __ElephantToJSONInner(_target, _longName)
+function __ElephantToJSONInner(_target, _longName, _diffsOnly)
 {
     if (is_struct(_target))
     {
@@ -34,6 +39,7 @@ function __ElephantToJSONInner(_target, _longName)
         }
         else
         {
+            var _diffTemplate = undefined;
             global.__elephantFound[? _target] = _longName;
             
             var _instanceof = instanceof(_target);
@@ -44,6 +50,22 @@ function __ElephantToJSONInner(_target, _longName)
             }
             else
             {
+                if (_diffsOnly)
+                {
+                    //Grab a diff template we've made before if possible
+                    _diffTemplate = global.__elephantTemplates[$ _instanceof];
+                    if (_diffTemplate == undefined)
+                    {
+                        //Try to spin up an empty instance of the constructor
+                        var _constructor = asset_get_index(_instanceof);
+                        if (is_method(_constructor) || (is_numeric(_constructor) && script_exists(_constructor)))
+                        {
+                            _diffTemplate = new _constructor();
+                            global.__elephantTemplates[$ _instanceof] = _diffTemplate;
+                        }
+                    }
+                }
+                
                 var _elephantSchemas = _target[$ __ELEPHANT_SCHEMA_NAME];
                 
                 //Discover the latest schema version
@@ -80,13 +102,35 @@ function __ElephantToJSONInner(_target, _longName)
             array_sort(_names, true);
             
             //Write the relevant data to the JSON
-            var _length = array_length(_names);
-            var _i = 0;
-            repeat(_length)
+            if (is_struct(_diffTemplate))
             {
-                var _name = _names[_i];
-                _duplicate[$ _name] = __ElephantToJSONInner(_target[$ _name], _longName + "." + _name);
-                ++_i;
+                //If we have a diff template then only write values that are different... obviously
+                var _length = array_length(_names);
+                var _i = 0;
+                repeat(_length)
+                {
+                    var _name = _names[_i];
+                    var _value = _target[$ _name];
+                    
+                    if (_value != _diffTemplate[$ _name])
+                    {
+                        _duplicate[$ _name] = __ElephantToJSONInner(_value, _longName + "." + _name, _diffsOnly);
+                    }
+                    
+                    ++_i;
+                }
+            }
+            else
+            {
+                //Otherwise write everything
+                var _length = array_length(_names);
+                var _i = 0;
+                repeat(_length)
+                {
+                    var _name = _names[_i];
+                    _duplicate[$ _name] = __ElephantToJSONInner(_target[$ _name], _longName + "." + _name, _diffsOnly);
+                    ++_i;
+                }
             }
             
             if (_instanceof != "struct")
@@ -117,7 +161,7 @@ function __ElephantToJSONInner(_target, _longName)
             var _i = 0;
             repeat(_length)
             {
-                _duplicate[@ _i] = __ElephantToJSONInner(_target[_i], _longName + "[" + string(_i) + "]");
+                _duplicate[@ _i] = __ElephantToJSONInner(_target[_i], _longName + "[" + string(_i) + "]", _diffsOnly);
                 ++_i;
             }
         }

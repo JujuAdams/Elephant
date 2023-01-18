@@ -6,10 +6,11 @@
 /// 
 /// @return  Buffer, either the buffer passed into the function or a buffer the function created itself
 /// 
-/// @param target    Data to serialize
-/// @param [buffer]  Optional, the buffer to write to. If no buffer is provided then one is created automatically
+/// @param target       Data to serialize
+/// @param [buffer]     Optional, the buffer to write to. If no buffer is provided then one is created automatically
+/// @param [diffsOnly]  Optional, whether to only write diffs. If no value is provided then this defaults to ELEPHANT_DEFAULT_WRITE_DIFFS_ONLY
 
-function ElephantWrite(_target, _buffer = undefined)
+function ElephantWrite(_target, _buffer = undefined, _diffsOnly = ELEPHANT_DEFAULT_WRITE_DIFFS_ONLY)
 {
     if (_buffer == undefined)
     {
@@ -27,13 +28,15 @@ function ElephantWrite(_target, _buffer = undefined)
     global.__elephantFound      = ds_map_create();
     global.__elephantFoundCount = 0;
     
+    global.__elephantTemplates = {};
+    
     ELEPHANT_IS_DESERIALIZING = false;
     ELEPHANT_SCHEMA_VERSION   = undefined;
     
     //Do serialization here
     buffer_write(_buffer, buffer_u32, __ELEPHANT_HEADER);
     buffer_write(_buffer, buffer_u32, __ELEPHANT_BYTE_VERSION);
-    __ElephantBufferInner(_buffer, _target, buffer_any);
+    __ElephantBufferInner(_buffer, _target, buffer_any, _diffsOnly);
     buffer_write(_buffer, buffer_u32, __ELEPHANT_FOOTER);
     
     if (_resize_buffer)
@@ -41,8 +44,10 @@ function ElephantWrite(_target, _buffer = undefined)
         buffer_resize(_buffer, buffer_tell(_buffer));
     }
     
-    //Make sure we clear references to 
+    //Make sure we clear references to found data
     ds_map_destroy(global.__elephantFound);
+    
+    global.__elephantTemplates = undefined;
     
     ELEPHANT_IS_DESERIALIZING = undefined;
     ELEPHANT_SCHEMA_VERSION   = undefined;
@@ -50,7 +55,7 @@ function ElephantWrite(_target, _buffer = undefined)
     return _buffer;
 }
 
-function __ElephantBufferInner(_buffer, _target, _datatype)
+function __ElephantBufferInner(_buffer, _target, _datatype, _diffsOnly)
 {
     if (_datatype == buffer_array)
     {
@@ -112,7 +117,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                     var _i = 0;
                     repeat(array_length(_target))
                     {
-                        __ElephantBufferInner(_buffer, _target[_i], _common);
+                        __ElephantBufferInner(_buffer, _target[_i], _common, _diffsOnly);
                         ++_i;
                     }
                 }
@@ -135,6 +140,8 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
         }
         else
         {
+            var _diffTemplate = undefined;
+            
             //Adds this struct to our already-written struct using a unique index
             //If we need to store a reference to this struct in the future then we use this index instead
             global.__elephantFound[? _target] = global.__elephantFoundCount;
@@ -166,7 +173,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                         var _name = _names[_i];
                         
                         buffer_write(_buffer, buffer_string, _name);
-                        __ElephantBufferInner(_buffer, _target[$ _name], buffer_any);
+                        __ElephantBufferInner(_buffer, _target[$ _name], buffer_any, _diffsOnly);
                         
                         ++_i;
                     }
@@ -174,6 +181,22 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
             }
             else
             {
+                if (_diffsOnly)
+                {
+                    //Grab a diff template we've made before if possible
+                    _diffTemplate = global.__elephantTemplates[$ _instanceof];
+                    if (_diffTemplate == undefined)
+                    {
+                        //Try to spin up an empty instance of the constructor
+                        var _constructor = asset_get_index(_instanceof);
+                        if (is_method(_constructor) || (is_numeric(_constructor) && script_exists(_constructor)))
+                        {
+                            _diffTemplate = new _constructor();
+                            global.__elephantTemplates[$ _instanceof] = _diffTemplate;
+                        }
+                    }
+                }
+                
                 //The struct's instanceof indicates this has been instantiated using a constructor
                 //Let's write a special value to communicate that to the deserializer
                 buffer_write(_buffer, buffer_u16, 0xFFFE);
@@ -216,6 +239,18 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                     var _verbose = true;
                 }
                 
+                if (is_struct(_diffTemplate))
+                {
+                    //Remove any variables that we don't need to write because they're not different to the diff template
+                    var _i = 0;
+                    repeat(array_length(_names))
+                    {
+                        var _name = _names[_i];
+                        if (_diffTemplate[$ _name] == _target[$ _name]) array_delete(_names, _i, 1);
+                        ++_i;
+                    }
+                }
+                
                 //Write the latest version and whether we're in verbose mode
                 buffer_write(_buffer, buffer_u8, (_verbose << 7) | (_latestVersion & 0x7F));
                 
@@ -239,7 +274,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                     {
                         var _name = _names[_i];
                         buffer_write(_buffer, buffer_string, _name);
-                        __ElephantBufferInner(_buffer, _target[$ _name], buffer_any);
+                        __ElephantBufferInner(_buffer, _target[$ _name], buffer_any, _diffsOnly);
                         
                         ++_i;
                     }
@@ -254,7 +289,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                     repeat(array_length(_names))
                     {
                         var _name = _names[_i];
-                        __ElephantBufferInner(_buffer, _target[$ _name], _schema[$ _name]);
+                        __ElephantBufferInner(_buffer, _target[$ _name], _schema[$ _name], _diffsOnly);
                         ++_i;
                     }
                 }
@@ -270,7 +305,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
     {
         _datatype = __ElephantValueToDatatype(_target);
         buffer_write(_buffer, buffer_u8, _datatype);
-        __ElephantBufferInner(_buffer, _target, _datatype);
+        __ElephantBufferInner(_buffer, _target, _datatype, _diffsOnly);
     }
     else if (_datatype == buffer_undefined)
     {
