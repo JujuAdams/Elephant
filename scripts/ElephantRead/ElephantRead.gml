@@ -46,7 +46,7 @@ function ElephantRead(_buffer)
             global.__elephantReadFunction = __ElephantReadInner_v4;
         break;
         
-        case ((1 << 16) | (5 << 8) | (0)): //1.4.0
+        case ((1 << 16) | (5 << 8) | (0)): //1.5.0
             global.__elephantReadFunction = __ElephantReadInner_v5;
         break;
         
