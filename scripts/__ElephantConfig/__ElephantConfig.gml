@@ -8,4 +8,4 @@
 //
 //If you do need to adjust default values when migrating between versions, you may
 //find it useful to set up a post-read callback -  see documentation for more info
-#macro  ELEPHANT_DEFAULT_WRITE_DIFFS_ONLY  true
+#macro  ELEPHANT_DEFAULT_WRITE_DIFFS_ONLY  false
