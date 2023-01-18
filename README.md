@@ -1,4 +1,4 @@
-<h1 align="center">Elephant 1.4.0</h1>
+<h1 align="center">Elephant 1.5.0</h1>
 
 <p align="center">Advanced struct/array serialization for GameMaker 2022 LTS</p>
 
