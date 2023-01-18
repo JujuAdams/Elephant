@@ -9,11 +9,8 @@
 /// @param target    Data to serialize
 /// @param [buffer]  Optional, the buffer to write to. If no buffer is provided then one is created automatically
 
-function ElephantWrite()
+function ElephantWrite(_target, _buffer = undefined)
 {
-    var _target = argument[0];
-    var _buffer = (argument_count > 1)? argument[1] : undefined;
-    
     if (_buffer == undefined)
     {
         _buffer = buffer_create(1024, buffer_grow, 1);

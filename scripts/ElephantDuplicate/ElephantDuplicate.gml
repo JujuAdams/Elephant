@@ -8,10 +8,9 @@
 /// @param target           Data to duplicate
 /// @param [forceVerbose]   Optional, whether to force verbose duplication for structs. Defaults to <false>
 
-function ElephantDuplicate()
+function ElephantDuplicate(_target, _forceVerbose = false)
 {
-    var _target = argument[0];
-    global.__elephantForceVerbose = ((argument_count > 1) && (argument[1] != undefined))? argument[1] : false;
+    global.__elephantForceVerbose = _forceVerbose;
     
     global.__elephantFoundDuplicate = ds_map_create();
     
