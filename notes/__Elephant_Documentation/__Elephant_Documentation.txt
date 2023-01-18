@@ -1,5 +1,5 @@
 Elephant Documentation
-v1.2.0  2021-06-12
+v1.4.0  2023-01-18
 @jujuadams
 
 1. Introduction
@@ -152,10 +152,10 @@ constants that are used for buffer access.
     11  buffer_string     String of any size, with a null terminator
     12  buffer_u64        An unsigned 64bit integer
     13  buffer_text       String of any size, with a null terminator (there is no difference between buffer_text and buffer_string)
-    14  buffer_any        Datatype can be any serializable data. This is the default when serializing content in arrays or structs that have no schema
-    15  buffer_array      Data is an array. Array elements themselves can be any datatype, though Elephant will optimise arrays with a consistent datatype. Arrays are limited to 65534 elements.
-    16  buffer_struct     Data is a struct, either anonymous or created by a constructor. Structs are limited to 65533 member variables
-    17  buffer_undefined  Undefined value, using GameMaker's <undefined> datatype. This is equivalent to <null> in JavaScript
+   204  buffer_any        Datatype can be any serializable data. This is the default when serializing content in arrays or structs that have no schema
+   205  buffer_array      Data is an array. Array elements themselves can be any datatype, though Elephant will optimise arrays with a consistent datatype. Arrays are limited to 65534 elements.
+   206  buffer_struct     Data is a struct, either anonymous or created by a constructor. Structs are limited to 65533 member variables
+   207  buffer_undefined  Undefined value, using GameMaker's <undefined> datatype. This is equivalent to <null> in JavaScript
 
 
 
