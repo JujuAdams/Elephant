@@ -87,7 +87,7 @@ function __ElephantError()
     }
     
     show_debug_message("Elephant: " + _string);
-    show_error("Elephant:\n" + _string + "\n ", true);
+    show_error("Elephant " + string(__ELEPHANT_VERSION) + ":\n" + _string + "\n ", true);
 }
 
 function __ElephantValueToDatatype(_value)
