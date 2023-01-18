@@ -2,9 +2,10 @@
 /// 
 /// @return base64-encoded string
 /// 
-/// @param target  Data to serialize
+/// @param target       Data to serialize
+/// @param [diffsOnly]  Optional, whether to only write diffs. If no value is provided then this defaults to ELEPHANT_DEFAULT_WRITE_DIFFS_ONLY
 
-function ElephantExportString(_target)
+function ElephantExportString(_target, _diffsOnly = ELEPHANT_DEFAULT_WRITE_DIFFS_ONLY)
 {
     var _buffer = ElephantWrite(_target);
     
