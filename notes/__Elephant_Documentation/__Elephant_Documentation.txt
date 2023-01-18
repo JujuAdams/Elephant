@@ -168,7 +168,7 @@ Elephant allows for the definition of callback methods per constructor. These ar
     ELEPHANT_PRE_WRITE_METHOD   Executed immediately before serialization
     ELEPHANT_POST_WRITE_METHOD  Executed immediately after serialization
     ELEPHANT_PRE_READ_METHOD    Executed immediately before deserialization
-    ELEPHANT_POST_READ_METHOD   Executed immediately after deserialization
+    ELEPHANT_POST_READ_METHOD   Executed after deserialization of the entire data structure
 
 During the execution of callbacks, two macros can be read: ELEPHANT_SCHEMA_VERSION and ELEPHANT_IS_DESERIALIZING.
 ELEPHANT_SCHEMA_VERSION contains the schema version that is being used, whereas ELEPHANT_IS_DESERIALIZING will be
