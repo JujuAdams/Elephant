@@ -44,6 +44,7 @@ global.__elephantReadFunction         = undefined;
 global.__elephantConstructorIndexes   = {};
 global.__elephantConstructorNextIndex = 0;
 global.__elephantFound                = undefined;
+global.__elephantTemplates            = undefined;
 global.__elephantFoundCount           = 0;
 global.__elephantForceVerbose         = false;
 ELEPHANT_SCHEMA_VERSION               = undefined;
