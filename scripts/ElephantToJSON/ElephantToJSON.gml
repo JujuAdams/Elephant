@@ -7,13 +7,21 @@
 function ElephantToJSON(_target)
 {
     global.__elephantFound = ds_map_create();
-    var _duplicate = __ElephantToJSONInner(_target);
+    
+    ELEPHANT_IS_DESERIALIZING = false;
+    ELEPHANT_SCHEMA_VERSION   = undefined;
+    
+    var _duplicate = __ElephantToJSONInner(_target, "");
+    
     ds_map_destroy(global.__elephantFound);
+    
+    ELEPHANT_IS_DESERIALIZING = undefined;
+    ELEPHANT_SCHEMA_VERSION   = undefined;
     
     return _duplicate;
 }
 
-function __ElephantToJSONInner(_target)
+function __ElephantToJSONInner(_target, _longName)
 {
     if (is_struct(_target))
     {
@@ -26,7 +34,7 @@ function __ElephantToJSONInner(_target)
         }
         else
         {
-            global.__elephantFound[? _target] = ds_map_size(global.__elephantFound);
+            global.__elephantFound[? _target] = _longName;
             
             var _instanceof = instanceof(_target);
             if (_instanceof == "struct")
@@ -39,7 +47,7 @@ function __ElephantToJSONInner(_target)
                 var _elephantSchemas = _target[$ __ELEPHANT_SCHEMA_NAME];
                 
                 //Discover the latest schema version
-                var _latestVersion = __ElephantConstructorFindLatestVersion(_elephantSchemas);
+                var _latestVersion = __ElephantConstructorFindLatestVersion(_elephantSchemas, _instanceof);
                 if (_latestVersion > 0)
                 {
                     //Get the appropriate schema
@@ -69,7 +77,7 @@ function __ElephantToJSONInner(_target)
             
             //Sort the names alphabetically
             //This is important for serializing circular references so that the indexes are always created in the same order
-            array_sort(_names, lb_sort_ascending);
+            array_sort(_names, true);
             
             //Write the relevant data to the JSON
             var _length = array_length(_names);
@@ -77,7 +85,7 @@ function __ElephantToJSONInner(_target)
             repeat(_length)
             {
                 var _name = _names[_i];
-                _duplicate[$ _name] = __ElephantToJSONInner(_target[$ _name]);
+                _duplicate[$ _name] = __ElephantToJSONInner(_target[$ _name], _longName + "." + _name);
                 ++_i;
             }
             
@@ -102,14 +110,14 @@ function __ElephantToJSONInner(_target)
         }
         else
         {
-            global.__elephantFound[? _target] = ds_map_size(global.__elephantFound);
+            global.__elephantFound[? _target] = _longName;
             
             var _length = array_length(_target);
             var _duplicate = array_create(_length);
             var _i = 0;
             repeat(_length)
             {
-                _duplicate[@ _i] = __ElephantToJSONInner(_target[_i]);
+                _duplicate[@ _i] = __ElephantToJSONInner(_target[_i], _longName + "[" + string(_i) + "]");
                 ++_i;
             }
         }

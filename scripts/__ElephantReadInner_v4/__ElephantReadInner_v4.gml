@@ -1,4 +1,4 @@
-function __ElephantReadInner_v2(_buffer, _datatype)
+function __ElephantReadInner_v4(_buffer, _datatype)
 {
     if (_datatype == buffer_array)
     {
@@ -71,20 +71,37 @@ function __ElephantReadInner_v2(_buffer, _datatype)
                 __ElephantError("Could not resolve constructor function \"", _instanceof, "\"");
             }
             
+            //Read out the schema version used to serialize this struct and whether it was stored verbosely
+            var _version_and_verbose = buffer_read(_buffer, buffer_u8);
+            var _verbose = (_version_and_verbose >> 7);
+            var _version = (_version_and_verbose & 0x7F);
+            
             //Adds this struct to ourlook-up table using a unique index
             //If we read a reference to this struct in the future then we grab it out of this look-up table
             global.__elephantFound[? global.__elephantFoundCount] = _struct;
             global.__elephantFoundCount++;
             
-            //Read out the schema version used to serialize this struct
-            var _version = buffer_read(_buffer, buffer_u8);
+            //Add this struct to our lists so we can call its post-read method later
+            ds_list_add(global.__elephantPostReadCallbackOrder,   _struct );
+            ds_list_add(global.__elephantPostReadCallbackVersion, _version);
             
             //Execute the pre-read callback if we can
             ELEPHANT_SCHEMA_VERSION = _version;
             var _callback = _struct[$ __ELEPHANT_PRE_READ_METHOD_NAME];
             if (is_method(_callback)) method(_struct, _callback)();
             
-            if (_version > 0)
+            if (_verbose)
+            {
+                var _length = buffer_read(_buffer, buffer_u16);
+                var _i = 0;
+                repeat(_length)
+                {
+                    var _name = buffer_read(_buffer, buffer_string);
+                    _struct[$ _name] = global.__elephantReadFunction(_buffer, buffer_any);
+                    ++_i;
+                }
+            }
+            else
             {
                 var _elephantSchemas = _struct[$ __ELEPHANT_SCHEMA_NAME];
                 if (is_struct(_elephantSchemas))
@@ -92,11 +109,11 @@ function __ElephantReadInner_v2(_buffer, _datatype)
                     var _schema = _elephantSchemas[$ "v" + string(_version)];
                     if (is_struct(_schema))
                     {
-                        //Get variables names, and alphabetize them
+                        //Get variables names, and alphabetize them so that they match the order that they were serialized
                         var _names = variable_struct_get_names(_schema);
                         array_sort(_names, true);
                         
-                        //Iterate over the serializable variable names and read them
+                        //Iterate over the variable names and read them
                         var _i = 0;
                         repeat(array_length(_names))
                         {
@@ -115,23 +132,6 @@ function __ElephantReadInner_v2(_buffer, _datatype)
                     __ElephantError("No Elephant schema found for constructor \"", _instanceof, "\", but a schema is required for importing");
                 }
             }
-            else
-            {
-                //If the version was 0 (i.e. no serialization data available for the constructor) then all data has been stored with explicit key names
-                var _length = buffer_read(_buffer, buffer_u16);
-                var _i = 0;
-                repeat(_length)
-                {
-                    var _name = buffer_read(_buffer, buffer_string);
-                    _struct[$ _name] = global.__elephantReadFunction(_buffer, buffer_any);
-                    ++_i;
-                }
-            }
-            
-            //Execute the post-read callback if we can
-            ELEPHANT_SCHEMA_VERSION = _version;
-            var _callback = _struct[$ __ELEPHANT_POST_READ_METHOD_NAME];
-            if (is_method(_callback)) method(_struct, _callback)();
             
             return _struct;
         }

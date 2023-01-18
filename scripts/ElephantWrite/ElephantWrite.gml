@@ -203,7 +203,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                 var _elephantSchemas = _target[$ __ELEPHANT_SCHEMA_NAME];
                 
                 //Discover the latest schema version
-                var _latestVersion = __ElephantConstructorFindLatestVersion(_elephantSchemas);
+                var _latestVersion = __ElephantConstructorFindLatestVersion(_elephantSchemas, _instanceof);
                 if (_latestVersion > 0)
                 {
                     //Get the appropriate schema
@@ -250,7 +250,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype)
                 else
                 {
                     //Alphabetize the variables names so that they'll match the order that they will be deserialized
-                    array_sort(_names, lb_sort_ascending);
+                    array_sort(_names, true);
             
                     //Iterate over the serializable variable names and write them
                     var _i = 0;
