@@ -20,6 +20,7 @@
     {"id":{"name":"__ElephantReadInner_v3","path":"scripts/__ElephantReadInner_v3/__ElephantReadInner_v3.yy",},"order":5,},
     {"id":{"name":"__ElephantReadInner_v1","path":"scripts/__ElephantReadInner_v1/__ElephantReadInner_v1.yy",},"order":3,},
     {"id":{"name":"__ElephantReadInner_v4","path":"scripts/__ElephantReadInner_v4/__ElephantReadInner_v4.yy",},"order":6,},
+    {"id":{"name":"__ElephantReadInner_v5","path":"scripts/__ElephantReadInner_v5/__ElephantReadInner_v5.yy",},"order":7,},
     {"id":{"name":"TestConstructor","path":"scripts/TestConstructor/TestConstructor.yy",},"order":7,},
     {"id":{"name":"TestVersionedVerbose","path":"scripts/TestVersionedVerbose/TestVersionedVerbose.yy",},"order":10,},
     {"id":{"name":"ElephantWrite","path":"scripts/ElephantWrite/ElephantWrite.yy",},"order":2,},
