@@ -133,7 +133,7 @@ function __ElephantDuplicateInner(_target, _datatype)
                 
                 //Discover the latest schema version
                 var _elephantSchemas = _target[$ __ELEPHANT_SCHEMA_NAME];
-                var _latestVersion = __ElephantConstructorFindLatestVersion(_elephantSchemas);
+                var _latestVersion = __ElephantConstructorFindLatestVersion(_elephantSchemas, _instanceof);
                 if (_latestVersion > 0)
                 {
                     //Get the appropriate schema

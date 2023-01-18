@@ -47,7 +47,7 @@ function __ElephantToJSONInner(_target, _longName)
                 var _elephantSchemas = _target[$ __ELEPHANT_SCHEMA_NAME];
                 
                 //Discover the latest schema version
-                var _latestVersion = __ElephantConstructorFindLatestVersion(_elephantSchemas);
+                var _latestVersion = __ElephantConstructorFindLatestVersion(_elephantSchemas, _instanceof);
                 if (_latestVersion > 0)
                 {
                     //Get the appropriate schema

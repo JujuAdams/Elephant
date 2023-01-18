@@ -121,7 +121,7 @@ function __ElephantValueToDatatype(_value)
     return buffer_undefined;
 }
 
-function __ElephantConstructorFindLatestVersion(_elephantSchemas)
+function __ElephantConstructorFindLatestVersion(_elephantSchemas, _instanceof)
 {
     var _latestVersion = 0;
     
