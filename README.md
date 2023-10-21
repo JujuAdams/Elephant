@@ -1,6 +1,6 @@
 <h1 align="center">Elephant 1.5.0</h1>
 
-<p align="center">Advanced struct/array serialization for GameMaker 2022 LTS by <a href="https://www.jujuadams.com/" target="_blank">Juju Adams</a></p>
+<p align="center">Advanced struct/array serialization for GameMaker LTS 2022</p>
 
 <p align="center">Chat about Elephant on the <a href="https://discord.gg/8krYCqr">Discord server</a></p>
 
