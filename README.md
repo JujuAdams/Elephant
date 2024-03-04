@@ -2,8 +2,6 @@
 
 <p align="center">Advanced struct/array serialization for GameMaker LTS 2022</p>
 
-<p align="center">Chat about Elephant on the <a href="https://discord.gg/e9wrvnCWkK">Discord server</a></p>
-
 &nbsp;
 
 &nbsp;
