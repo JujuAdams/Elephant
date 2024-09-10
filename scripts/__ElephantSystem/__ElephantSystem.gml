@@ -21,7 +21,6 @@ function __ElephantSystem()
     _system = {};
     with(_system)
     {
-        __readFunction          = undefined;
         __constructorNextIndex  = 0;
         __constructorIndexesMap = ds_map_create();
         __foundCount            = 0;

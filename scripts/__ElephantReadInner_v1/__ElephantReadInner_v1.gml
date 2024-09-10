@@ -53,7 +53,7 @@ function __ElephantReadInner_v1(_buffer, _datatype)
                     repeat(array_length(_names))
                     {
                         var _name = _names[_i];
-                        _struct[$ _name] = _system.__readFunction(_buffer, _schema[$ _name]);
+                        _struct[$ _name] = __ElephantReadInner_v1(_buffer, _schema[$ _name]);
                         ++_i;
                     }
                 }
@@ -75,7 +75,7 @@ function __ElephantReadInner_v1(_buffer, _datatype)
             repeat(_extraSize)
             {
                 var _name = buffer_read(_buffer, buffer_string);
-                _struct[$ _name] = _system.__readFunction(_buffer, buffer_any);
+                _struct[$ _name] = __ElephantReadInner_v1(_buffer, buffer_any);
                 ++_i;
             }
         }
@@ -98,7 +98,7 @@ function __ElephantReadInner_v1(_buffer, _datatype)
             var _i = 0;
             repeat(_size)
             {
-                _array[@ _i] = _system.__readFunction(_buffer, _common_datatype);
+                _array[@ _i] = __ElephantReadInner_v1(_buffer, _common_datatype);
                 ++_i;
             }
         }
@@ -114,7 +114,7 @@ function __ElephantReadInner_v1(_buffer, _datatype)
         repeat(_size)
         {
             var _name = buffer_read(_buffer, buffer_string);
-            _struct[$ _name] = _system.__readFunction(_buffer, buffer_any);
+            _struct[$ _name] = __ElephantReadInner_v1(_buffer, buffer_any);
             ++_i;
         }
         
@@ -123,7 +123,7 @@ function __ElephantReadInner_v1(_buffer, _datatype)
     else if (_datatype == buffer_any)
     {
         _datatype = buffer_read(_buffer, buffer_u8);
-        return _system.__readFunction(_buffer,_datatype);
+        return __ElephantReadInner_v1(_buffer,_datatype);
     }
     else if (_datatype == buffer_undefined)
     {

@@ -31,30 +31,31 @@ function ElephantRead(_buffer)
     ELEPHANT_SCHEMA_VERSION   = undefined;
     
     //Read the Elephant version out from the buffer, then figure out which deserialization function to run
+    var _function = undefined;
     var _version = buffer_read(_buffer, buffer_u32);
     switch(_version)
     {
         case ((1 << 16) | (0 << 8) | (0)): //1.0.0
-            _system.__readFunction = __ElephantReadInner_v1;
+            _function = __ElephantReadInner_v1;
         break;
         
         case ((1 << 16) | (1 << 8) | (0)): //1.1.0
         case ((1 << 16) | (2 << 8) | (0)): //1.2.0
         case ((1 << 16) | (2 << 8) | (1)): //1.2.1
-            _system.__readFunction = __ElephantReadInner_v2;
+            _function = __ElephantReadInner_v2;
         break;
         
         case ((1 << 16) | (3 << 8) | (0)): //1.3.0
-            _system.__readFunction = __ElephantReadInner_v3;
+            _function = __ElephantReadInner_v3;
         break;
         
         case ((1 << 16) | (4 << 8) | (0)): //1.4.0
-            _system.__readFunction = __ElephantReadInner_v4;
+            _function = __ElephantReadInner_v4;
         break;
         
         case ((1 << 16) | (5 << 8) | (0)): //1.5.0
         case ((1 << 16) | (5 << 8) | (1)): //1.5.1
-            _system.__readFunction = __ElephantReadInner_v5;
+            _function = __ElephantReadInner_v5;
         break;
         
         default:
@@ -66,7 +67,7 @@ function ElephantRead(_buffer)
     }
     
     //Run the read function and grab whatever comes back (hopefully it's useful data!)
-    var _result = _system.__readFunction(_buffer, buffer_any);
+    var _result = _function(_buffer, buffer_any);
     
     var _footer = buffer_read(_buffer, buffer_u32);
     if (_footer != ELEPHANT_FOOTER) __ElephantError("Footer mismatch");
