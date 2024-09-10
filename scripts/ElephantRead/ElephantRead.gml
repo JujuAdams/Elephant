@@ -10,7 +10,7 @@
 function ElephantRead(_buffer)
 {
     var _header = buffer_read(_buffer, buffer_u32);
-    if (_header != __ELEPHANT_HEADER) __ElephantError("Header mismatch");
+    if (_header != ELEPHANT_HEADER) __ElephantError("Header mismatch");
     
     global.__elephantConstructorNextIndex = 0;
     global.__elephantConstructorIndexes   = {};
@@ -47,6 +47,7 @@ function ElephantRead(_buffer)
         break;
         
         case ((1 << 16) | (5 << 8) | (0)): //1.5.0
+        case ((1 << 16) | (5 << 8) | (1)): //1.5.1
             global.__elephantReadFunction = __ElephantReadInner_v5;
         break;
         
@@ -54,7 +55,7 @@ function ElephantRead(_buffer)
             var _major = _version >> 16;
             var _minor = (_version >> 8) & 0xFF;
             var _patch = _version & 0xFF
-            __ElephantError("Buffer is for unsupported version ", _major, ".", _minor, ".", _patch, ", it may be a newer version\n(Found ", _version, ", we are ", __ELEPHANT_VERSION, ")");
+            __ElephantError("Buffer is for unsupported version ", _major, ".", _minor, ".", _patch, ", it may be a newer version\n(Found ", _version, ", we are ", ELEPHANT_VERSION, ")");
         break;
     }
     
@@ -62,7 +63,7 @@ function ElephantRead(_buffer)
     var _result = global.__elephantReadFunction(_buffer, buffer_any);
     
     var _footer = buffer_read(_buffer, buffer_u32);
-    if (_footer != __ELEPHANT_FOOTER) __ElephantError("Footer mismatch");
+    if (_footer != ELEPHANT_FOOTER) __ElephantError("Footer mismatch");
     
     //Now execute post-read callbacks in the order that the structs were created (1.4.0 / v4 and above only)
     var _i = 0;
