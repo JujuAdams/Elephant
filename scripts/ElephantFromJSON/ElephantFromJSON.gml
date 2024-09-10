@@ -85,9 +85,12 @@ function __ElephantFromJSONInner(_target, _longName)
             }
             
             //Execute the pre-read callback if we can
-            ELEPHANT_SCHEMA_VERSION = _version;
             var _callback = _struct[$ __ELEPHANT_PRE_READ_METHOD_NAME];
-            if (is_method(_callback)) method(_struct, _callback)();
+            if (is_method(_callback))
+            {
+                ELEPHANT_SCHEMA_VERSION = _version;
+                method(_struct, _callback)();
+            }
             
             //Add this struct to our lists so we can call its post-read method later
             ds_list_add(_postReadCallbackOrder,   _struct);

@@ -96,9 +96,12 @@ function __ElephantToJSONInner(_target, _longName, _diffsOnly)
                 _duplicate[$ __ELEPHANT_JSON_SCHEMA_VERSION] = _latestVersion;
                 
                 //Execute the pre-write callback if we can
-                ELEPHANT_SCHEMA_VERSION = _latestVersion;
                 var _callback = _target[$ __ELEPHANT_PRE_WRITE_METHOD_NAME];
-                if (is_method(_callback)) method(_target, _callback)();
+                if (is_method(_callback))
+                {
+                    ELEPHANT_SCHEMA_VERSION = _latestVersion;
+                    method(_target, _callback)();
+                }
                 
                 if (_verbose) __ElephantRemoveExcludedVariables(_names, _elephantSchemas);
             }
@@ -142,9 +145,12 @@ function __ElephantToJSONInner(_target, _longName, _diffsOnly)
             if (_instanceof != "struct")
             {
                 //Execute the post-write callback if we can
-                ELEPHANT_SCHEMA_VERSION = _latestVersion;
                 var _callback = _target[$ __ELEPHANT_POST_WRITE_METHOD_NAME];
-                if (is_method(_callback)) method(_target, _callback)();
+                if (is_method(_callback))
+                {
+                    ELEPHANT_SCHEMA_VERSION = _latestVersion;
+                    method(_target, _callback)();
+                }
             }
         }
         

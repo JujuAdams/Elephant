@@ -158,17 +158,23 @@ function __ElephantDuplicateInner(_target, _datatype)
                 }
                 
                 //Execute the pre-write callback if we can
-                ELEPHANT_SCHEMA_VERSION = _latestVersion;
                 var _callback = _target[$ __ELEPHANT_PRE_WRITE_METHOD_NAME];
-                if (is_method(_callback)) method(_target, _callback)();
+                if (is_method(_callback))
+                {
+                    ELEPHANT_SCHEMA_VERSION = _latestVersion;
+                    method(_target, _callback)();
+                }
                 
                 ds_list_add(_postReadCallbackOrder,   _copy         );
                 ds_list_add(_postReadCallbackVersion, _latestVersion);
                 
                 //Execute the pre-read callback if we can
-                ELEPHANT_SCHEMA_VERSION = _latestVersion;
                 var _callback = _copy[$ __ELEPHANT_PRE_READ_METHOD_NAME];
-                if (is_method(_callback)) method(_copy, _callback)();
+                if (is_method(_callback))
+                {
+                    ELEPHANT_SCHEMA_VERSION = _latestVersion;
+                    method(_copy, _callback)();
+                }
                 
                 if (_verbose || _system.__forceVerbose)
                 {
@@ -197,9 +203,12 @@ function __ElephantDuplicateInner(_target, _datatype)
                 }
                 
                 //Execute the post-write callback if we can
-                ELEPHANT_SCHEMA_VERSION = _latestVersion;
                 var _callback = _target[$ __ELEPHANT_POST_WRITE_METHOD_NAME];
-                if (is_method(_callback)) method(_target, _callback)();
+                if (is_method(_callback))
+                {
+                    ELEPHANT_SCHEMA_VERSION = _latestVersion;
+                    method(_target, _callback)();
+                }
             }
             
             return _copy;

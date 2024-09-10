@@ -45,6 +45,3 @@
 #macro  ELEPHANT_FORCE_VERSION      __Elephant_Force_Version__
 #macro  ELEPHANT_VERSION_VERBOSE    __Elephant_Version_Verbose__
 #macro  ELEPHANT_VERBOSE_EXCLUDE    __Elephant_Verbose_Exclude__
-
-ELEPHANT_SCHEMA_VERSION   = undefined;
-ELEPHANT_IS_DESERIALIZING = undefined;
