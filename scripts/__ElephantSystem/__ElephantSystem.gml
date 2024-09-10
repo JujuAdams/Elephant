@@ -11,12 +11,32 @@
 #macro __ELEPHANT_JSON_CONSTRUCTOR     "__Elephant_Constructor__"
 #macro __ELEPHANT_JSON_SCHEMA_VERSION  "__Elephant_Schema_Version__"
 
-global.__elephantReadFunction         = undefined;
-global.__elephantConstructorIndexes   = {};
-global.__elephantConstructorNextIndex = 0;
-global.__elephantFound                = undefined;
-global.__elephantTemplates            = undefined;
-global.__elephantFoundCount           = 0;
-global.__elephantForceVerbose         = false;
+__ElephantSystem();
 
-__ElephantTrace("Welcome to Elephant by Juju Adams! This is version " + string(ELEPHANT_VERSION) + ", " + string(ELEPHANT_DATE));
+function __ElephantSystem()
+{
+    static _system = undefined;
+    if (_system != undefined) return _system;
+    
+    _system = {};
+    with(_system)
+    {
+        __readFunction          = undefined;
+        __constructorNextIndex  = 0;
+        __constructorIndexesMap = ds_map_create();
+        __foundCount            = 0;
+        __foundMap              = ds_map_create();
+        __templatesMap          = ds_map_create();
+        __forceVerbose          = false;
+        
+        __postReadCallbackOrder   = ds_list_create();
+        __postReadCallbackVersion = ds_list_create();
+        
+        __isDeserializing = undefined;
+        __schemaVersion   = undefined;
+        
+        __ElephantTrace("Welcome to Elephant by Juju Adams! This is version " + string(ELEPHANT_VERSION) + ", " + string(ELEPHANT_DATE));
+    }
+    
+    return _system;
+}

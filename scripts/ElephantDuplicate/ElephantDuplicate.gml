@@ -10,12 +10,16 @@
 
 function ElephantDuplicate(_target, _forceVerbose = false)
 {
-    global.__elephantForceVerbose = _forceVerbose;
+    static _system                  = __ElephantSystem();
+    static _templatesMap            = _system.__templatesMap;
+    static _postReadCallbackOrder   = _system.__postReadCallbackOrder;
+    static _postReadCallbackVersion = _system.__postReadCallbackVersion;
     
-    global.__elephantFoundDuplicate = ds_map_create();
+    _system.__forceVerbose = _forceVerbose;
     
-    global.__elephantPostDuplicateCallbackOrder   = ds_list_create();
-    global.__elephantPostDuplicateCallbackVersion = ds_list_create();
+    ds_map_clear(_templatesMap);
+    ds_list_clear(_postReadCallbackOrder);
+    ds_list_clear(_postReadCallbackVersion);
     
     ELEPHANT_IS_DESERIALIZING = false;
     ELEPHANT_SCHEMA_VERSION   = undefined;
@@ -26,14 +30,14 @@ function ElephantDuplicate(_target, _forceVerbose = false)
     ELEPHANT_SCHEMA_VERSION   = undefined;
     
     var _i = 0;
-    repeat(ds_list_size(global.__elephantPostDuplicateCallbackOrder))
+    repeat(ds_list_size(_postReadCallbackOrder))
     {
-        with(global.__elephantPostDuplicateCallbackOrder[| _i])
+        with(_postReadCallbackOrder[| _i])
         {
             //Execute the post-read callback if we can
             if (variable_struct_exists(self, __ELEPHANT_POST_READ_METHOD_NAME))
             {
-                ELEPHANT_SCHEMA_VERSION = global.__elephantPostDuplicateCallbackVersion[| _i];
+                ELEPHANT_SCHEMA_VERSION = _postReadCallbackVersion[| _i];
                 self[$ __ELEPHANT_POST_READ_METHOD_NAME]();
             }
         }
@@ -41,26 +45,31 @@ function ElephantDuplicate(_target, _forceVerbose = false)
         ++_i;
     }
     
-    ds_map_destroy(global.__elephantFoundDuplicate);
-    ds_list_destroy(global.__elephantPostDuplicateCallbackOrder);
-    ds_list_destroy(global.__elephantPostDuplicateCallbackVersion);
+    ds_map_clear(_templatesMap);
+    ds_list_clear(_postReadCallbackOrder);
+    ds_list_clear(_postReadCallbackVersion);
     
     ELEPHANT_IS_DESERIALIZING = undefined;
     ELEPHANT_SCHEMA_VERSION   = undefined;
     
-    global.__elephantForceVerbose = false;
+    _system.__forceVerbose = false;
     
     return _result;
 }
 
 function __ElephantDuplicateInner(_target, _datatype)
 {
+    static _system                  = __ElephantSystem();
+    static _templatesMap            = _system.__templatesMap;
+    static _postReadCallbackOrder   = _system.__postReadCallbackOrder;
+    static _postReadCallbackVersion = _system.__postReadCallbackVersion;
+    
     if (_datatype == buffer_array)
     {
         if (!is_array(_target)) __ElephantError("Target isn't an array");
         
         //Check to see if we've seen this array before
-        var _foundCopy = global.__elephantFoundDuplicate[? _target];
+        var _foundCopy = _templatesMap[? _target];
         if (is_array(_foundCopy))
         {
             return _foundCopy;
@@ -70,7 +79,7 @@ function __ElephantDuplicateInner(_target, _datatype)
             var _length = array_length(_target);
             
             var _copy = array_create(_length);
-            global.__elephantFoundDuplicate[? _target] = _copy;
+            _templatesMap[? _target] = _copy;
             
             var _i = 0;
             repeat(_length)
@@ -87,7 +96,7 @@ function __ElephantDuplicateInner(_target, _datatype)
         if (!is_struct(_target)) __ElephantError("Target isn't a struct");
         
         //Check to see if we've seen this struct before
-        var _foundCopy = global.__elephantFoundDuplicate[? _target];
+        var _foundCopy = _templatesMap[? _target];
         if (is_struct(_foundCopy))
         {
             return _foundCopy;
@@ -99,7 +108,7 @@ function __ElephantDuplicateInner(_target, _datatype)
             if (_instanceof == "struct")
             {
                 var _copy = {};
-                global.__elephantFoundDuplicate[? _target] = _copy;
+                _templatesMap[? _target] = _copy;
                 
                 var _names = variable_struct_get_names(_target);
                 var _i = 0;
@@ -128,7 +137,7 @@ function __ElephantDuplicateInner(_target, _datatype)
                     __ElephantError("Could not resolve constructor function \"", _instanceof, "\"");
                 }
                 
-                global.__elephantFoundDuplicate[? _target] = _copy;
+                _templatesMap[? _target] = _copy;
                 
                 //Discover the latest schema version
                 var _elephantSchemas = _target[$ __ELEPHANT_SCHEMA_NAME];
@@ -153,15 +162,15 @@ function __ElephantDuplicateInner(_target, _datatype)
                 var _callback = _target[$ __ELEPHANT_PRE_WRITE_METHOD_NAME];
                 if (is_method(_callback)) method(_target, _callback)();
                 
-                ds_list_add(global.__elephantPostDuplicateCallbackOrder,   _copy         );
-                ds_list_add(global.__elephantPostDuplicateCallbackVersion, _latestVersion);
+                ds_list_add(_postReadCallbackOrder,   _copy         );
+                ds_list_add(_postReadCallbackVersion, _latestVersion);
                 
                 //Execute the pre-read callback if we can
                 ELEPHANT_SCHEMA_VERSION = _latestVersion;
                 var _callback = _copy[$ __ELEPHANT_PRE_READ_METHOD_NAME];
                 if (is_method(_callback)) method(_copy, _callback)();
                 
-                if (_verbose || global.__elephantForceVerbose)
+                if (_verbose || _system.__forceVerbose)
                 {
                     //There's no specific serialization information so we write this constructor as a generic struct
                     __ElephantRemoveExcludedVariables(_names, _elephantSchemas);

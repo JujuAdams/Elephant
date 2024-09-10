@@ -7,18 +7,20 @@
 
 function ElephantToJSON(_target, _diffsOnly = ELEPHANT_DEFAULT_WRITE_DIFFS_ONLY)
 {
-    global.__elephantFound = ds_map_create();
+    static _system       = __ElephantSystem();
+    static _foundMap     = _system.__foundMap;
+    static _templatesMap = _system.__templatesMap;
     
-    global.__elephantTemplates = {};
+    ds_map_clear(_foundMap);
+    ds_map_clear(_templatesMap);
     
     ELEPHANT_IS_DESERIALIZING = false;
     ELEPHANT_SCHEMA_VERSION   = undefined;
     
     var _duplicate = __ElephantToJSONInner(_target, "", _diffsOnly);
     
-    ds_map_destroy(global.__elephantFound);
-    
-    global.__elephantTemplates = undefined;
+    ds_map_clear(_foundMap);
+    ds_map_clear(_templatesMap);
     
     ELEPHANT_IS_DESERIALIZING = undefined;
     ELEPHANT_SCHEMA_VERSION   = undefined;
@@ -28,11 +30,15 @@ function ElephantToJSON(_target, _diffsOnly = ELEPHANT_DEFAULT_WRITE_DIFFS_ONLY)
 
 function __ElephantToJSONInner(_target, _longName, _diffsOnly)
 {
+    static _system       = __ElephantSystem();
+    static _foundMap     = _system.__foundMap;
+    static _templatesMap = _system.__templatesMap;
+    
     if (is_struct(_target))
     {
         var _duplicate = {};
         
-        var _circularRef = global.__elephantFound[? _target];
+        var _circularRef = _foundMap[? _target];
         if (_circularRef != undefined)
         {
             _duplicate[$ __ELEPHANT_JSON_CIRCULAR_REF] = _circularRef;
@@ -40,7 +46,7 @@ function __ElephantToJSONInner(_target, _longName, _diffsOnly)
         else
         {
             var _diffTemplate = undefined;
-            global.__elephantFound[? _target] = _longName;
+            _foundMap[? _target] = _longName;
             
             var _instanceof = instanceof(_target);
             if (_instanceof == "struct")
@@ -53,7 +59,7 @@ function __ElephantToJSONInner(_target, _longName, _diffsOnly)
                 if (_diffsOnly)
                 {
                     //Grab a diff template we've made before if possible
-                    _diffTemplate = global.__elephantTemplates[$ _instanceof];
+                    _diffTemplate = _templatesMap[? _instanceof];
                     if (_diffTemplate == undefined)
                     {
                         //Try to spin up an empty instance of the constructor
@@ -61,7 +67,7 @@ function __ElephantToJSONInner(_target, _longName, _diffsOnly)
                         if (is_method(_constructor) || (is_numeric(_constructor) && script_exists(_constructor)))
                         {
                             _diffTemplate = new _constructor();
-                            global.__elephantTemplates[$ _instanceof] = _diffTemplate;
+                            _templatesMap[? _instanceof] = _diffTemplate;
                         }
                     }
                 }
@@ -146,7 +152,7 @@ function __ElephantToJSONInner(_target, _longName, _diffsOnly)
     }
     else if (is_array(_target))
     {
-        var _circularRef = global.__elephantFound[? _target];
+        var _circularRef = _foundMap[? _target];
         if (_circularRef != undefined)
         {
             var _duplicate = {};
@@ -154,7 +160,7 @@ function __ElephantToJSONInner(_target, _longName, _diffsOnly)
         }
         else
         {
-            global.__elephantFound[? _target] = _longName;
+            _foundMap[? _target] = _longName;
             
             var _length = array_length(_target);
             var _duplicate = array_create(_length);

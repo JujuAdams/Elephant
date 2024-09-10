@@ -12,6 +12,11 @@
 
 function ElephantWrite(_target, _buffer = undefined, _diffsOnly = ELEPHANT_DEFAULT_WRITE_DIFFS_ONLY)
 {
+    static _system                = __ElephantSystem();
+    static _constructorIndexesMap = _system.__constructorIndexesMap;
+    static _foundMap              = _system.__foundMap;
+    static _templatesMap          = _system.__templatesMap;
+    
     if (_buffer == undefined)
     {
         _buffer = buffer_create(1024, buffer_grow, 1);
@@ -22,13 +27,11 @@ function ElephantWrite(_target, _buffer = undefined, _diffsOnly = ELEPHANT_DEFAU
         var _resize_buffer = false;
     }
     
-    global.__elephantConstructorNextIndex = 0;
-    global.__elephantConstructorIndexes   = {};
-    
-    global.__elephantFound      = ds_map_create();
-    global.__elephantFoundCount = 0;
-    
-    global.__elephantTemplates = {};
+    _system.__constructorNextIndex = 0;
+    ds_map_clear(_constructorIndexesMap);
+    _system.__foundCount = 0;
+    ds_map_clear(_foundMap);
+    ds_map_clear(_templatesMap);
     
     ELEPHANT_IS_DESERIALIZING = false;
     ELEPHANT_SCHEMA_VERSION   = undefined;
@@ -45,9 +48,9 @@ function ElephantWrite(_target, _buffer = undefined, _diffsOnly = ELEPHANT_DEFAU
     }
     
     //Make sure we clear references to found data
-    ds_map_destroy(global.__elephantFound);
-    
-    global.__elephantTemplates = undefined;
+    ds_map_clear(_constructorIndexesMap);
+    ds_map_clear(_foundMap);
+    ds_map_clear(_templatesMap);
     
     ELEPHANT_IS_DESERIALIZING = undefined;
     ELEPHANT_SCHEMA_VERSION   = undefined;
@@ -57,12 +60,17 @@ function ElephantWrite(_target, _buffer = undefined, _diffsOnly = ELEPHANT_DEFAU
 
 function __ElephantBufferInner(_buffer, _target, _datatype, _diffsOnly)
 {
+    static _system                = __ElephantSystem();
+    static _constructorIndexesMap = _system.__constructorIndexesMap;
+    static _foundMap              = _system.__foundMap;
+    static _templatesMap          = _system.__templatesMap;
+    
     if (_datatype == buffer_array)
     {
         if (!is_array(_target)) __ElephantError("Target isn't an array");
         
         //Check to see if we've seen this array before
-        var _foundIndex = global.__elephantFound[? _target];
+        var _foundIndex = _foundMap[? _target];
         if (is_numeric(_foundIndex))
         {
             //Write a special length here to indicate we're going to use a previously-created reference
@@ -82,8 +90,8 @@ function __ElephantBufferInner(_buffer, _target, _datatype, _diffsOnly)
             {
                 //Adds this array to our already-written struct using a unique index
                 //If we need to store a reference to this array in the future then we use this index instead
-                global.__elephantFound[? _target] = global.__elephantFoundCount;
-                global.__elephantFoundCount++;
+                _foundMap[? _target] = _system.__foundCount;
+                _system.__foundCount++;
                 
                 //Write the length of the array
                 buffer_write(_buffer, buffer_u16, _length);
@@ -129,7 +137,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype, _diffsOnly)
         if (!is_struct(_target)) __ElephantError("Target isn't a struct");
         
         //Check to see if we've seen this struct before
-        var _foundIndex = global.__elephantFound[? _target];
+        var _foundIndex = _foundMap[? _target];
         if (is_numeric(_foundIndex))
         {
             //Write a special length here to indicate we're going to use a previously-created reference
@@ -144,8 +152,8 @@ function __ElephantBufferInner(_buffer, _target, _datatype, _diffsOnly)
             
             //Adds this struct to our already-written struct using a unique index
             //If we need to store a reference to this struct in the future then we use this index instead
-            global.__elephantFound[? _target] = global.__elephantFoundCount;
-            global.__elephantFoundCount++;
+            _foundMap[? _target] = _system.__foundCount;
+            _system.__foundCount++;
             
             //Check to see if this is a normal struct
             var _instanceof = instanceof(_target);
@@ -184,7 +192,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype, _diffsOnly)
                 if (_diffsOnly)
                 {
                     //Grab a diff template we've made before if possible
-                    _diffTemplate = global.__elephantTemplates[$ _instanceof];
+                    _diffTemplate = _templatesMap[? _instanceof];
                     if (_diffTemplate == undefined)
                     {
                         //Try to spin up an empty instance of the constructor
@@ -192,7 +200,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype, _diffsOnly)
                         if (is_method(_constructor) || (is_numeric(_constructor) && script_exists(_constructor)))
                         {
                             _diffTemplate = new _constructor();
-                            global.__elephantTemplates[$ _instanceof] = _diffTemplate;
+                            _templatesMap[? _instanceof] = _diffTemplate;
                         }
                     }
                 }
@@ -202,7 +210,7 @@ function __ElephantBufferInner(_buffer, _target, _datatype, _diffsOnly)
                 buffer_write(_buffer, buffer_u16, 0xFFFE);
                 
                 //Try to find a datatype index for this constructor
-                var _index = global.__elephantConstructorIndexes[$ _instanceof];
+                var _index = _constructorIndexesMap[? _instanceof];
                 if (_index != undefined)
                 {
                     buffer_write(_buffer, buffer_u16, _index);
@@ -211,9 +219,9 @@ function __ElephantBufferInner(_buffer, _target, _datatype, _diffsOnly)
                 {
                     //If we can't find one, return a new index
                     //We handle what to do with a new index when we run __ElephantBufferInner() again
-                    _index = global.__elephantConstructorNextIndex;
-                    global.__elephantConstructorNextIndex++;
-                    global.__elephantConstructorIndexes[$ _instanceof] = _index;
+                    _index = _system.__constructorNextIndex;
+                    _system.__constructorNextIndex++;
+                    _constructorIndexesMap[? _instanceof] = _index;
                     
                     //Write our new index and which constructor this maps to
                     buffer_write(_buffer, buffer_u16, _index);

@@ -35,8 +35,8 @@
 #macro  buffer_struct     206
 #macro  buffer_undefined  207
 
-#macro  ELEPHANT_IS_DESERIALIZING   global.__elephantIsDeserializing
-#macro  ELEPHANT_SCHEMA_VERSION     global.__elephantSchemeVersion
+#macro  ELEPHANT_IS_DESERIALIZING   (__ElephantSystem().__isDeserializing)
+#macro  ELEPHANT_SCHEMA_VERSION     (__ElephantSystem().__schemaVersion)
 #macro  ELEPHANT_SCHEMA             static __Elephant_Schema__ =
 #macro  ELEPHANT_PRE_WRITE_METHOD   static __Elephant_Pre_Write_Method__  = function()
 #macro  ELEPHANT_POST_WRITE_METHOD  static __Elephant_Post_Write_Method__ = function()
