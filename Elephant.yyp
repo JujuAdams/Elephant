@@ -8,7 +8,7 @@
     {"id":{"name":"ElephantDuplicate","path":"scripts/ElephantDuplicate/ElephantDuplicate.yy",},"order":7,},
     {"id":{"name":"oTest","path":"objects/oTest/oTest.yy",},"order":1,},
     {"id":{"name":"ElephantImportString","path":"scripts/ElephantImportString/ElephantImportString.yy",},"order":6,},
-    {"id":{"name":"__Elephant_Documentation","path":"notes/__Elephant_Documentation/__Elephant_Documentation.yy",},"order":0,},
+    {"id":{"name":"__ElephantDocumentation","path":"notes/__ElephantDocumentation/__ElephantDocumentation.yy",},"order":0,},
     {"id":{"name":"rmMain","path":"rooms/rmMain/rmMain.yy",},"order":6,},
     {"id":{"name":"__ElephantTrace","path":"scripts/__ElephantTrace/__ElephantTrace.yy",},"order":7,},
     {"id":{"name":"__ElephantReadInner_v2","path":"scripts/__ElephantReadInner_v2/__ElephantReadInner_v2.yy",},"order":3,},

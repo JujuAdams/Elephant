@@ -1,7 +1,7 @@
 {
   "resourceType": "GMNotes",
   "resourceVersion": "1.1",
-  "name": "__Elephant_Documentation",
+  "name": "__ElephantDocumentation",
   "parent": {
     "name": "Elephant",
     "path": "folders/Elephant.yy",
