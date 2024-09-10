@@ -81,6 +81,9 @@ Elephant has five public functions that can be used:
 - `ElephantDuplicate(target)`
   - Makes an identical copy of the target. Unlike `ElephantWrite()`, this function ignores schemas and will copy all member variables and non-static methods. This function will recreate constructed structs appropriately and will also correctly duplicate circular references.
 
+- `ElephantToJSON(string)`
+  - Makes a copy of a struct/array JSON, respecting Elephant schemas, circular references, and constructors.
+
 &nbsp;
 
 &nbsp;
