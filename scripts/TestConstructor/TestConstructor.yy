@@ -1,12 +1,13 @@
 {
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "Elephant",
-    "path": "Elephant.yyp",
+  "$GMScript":"v1",
+  "%Name":"TestConstructor",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"TestConstructor",
+  "parent":{
+    "name":"Elephant",
+    "path":"Elephant.yyp",
   },
-  "resourceVersion": "1.0",
-  "name": "TestConstructor",
-  "tags": [],
-  "resourceType": "GMScript",
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

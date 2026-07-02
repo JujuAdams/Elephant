@@ -1,12 +1,13 @@
 {
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "Elephant",
-    "path": "Elephant.yyp",
+  "$GMScript":"v1",
+  "%Name":"TestForceVersion",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"TestForceVersion",
+  "parent":{
+    "name":"Elephant",
+    "path":"Elephant.yyp",
   },
-  "resourceVersion": "1.0",
-  "name": "TestForceVersion",
-  "tags": [],
-  "resourceType": "GMScript",
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

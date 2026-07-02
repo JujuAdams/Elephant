@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "__ElephantConfig",
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "Elephant",
-    "path": "folders/Elephant.yy",
+  "$GMScript":"v1",
+  "%Name":"__ElephantConfig",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__ElephantConfig",
+  "parent":{
+    "name":"Elephant",
+    "path":"folders/Elephant.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

@@ -1,12 +1,13 @@
 {
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "Elephant",
-    "path": "folders/Elephant.yy",
+  "$GMScript":"v1",
+  "%Name":"ElephantImportString",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ElephantImportString",
+  "parent":{
+    "name":"Elephant",
+    "path":"folders/Elephant.yy",
   },
-  "resourceVersion": "1.0",
-  "name": "ElephantImportString",
-  "tags": [],
-  "resourceType": "GMScript",
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

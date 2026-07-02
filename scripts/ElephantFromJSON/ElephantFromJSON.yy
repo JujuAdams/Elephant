@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "ElephantFromJSON",
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "An elephant never forgets",
-    "path": "folders/Elephant/(System)/An elephant never forgets.yy",
+  "$GMScript":"v1",
+  "%Name":"ElephantFromJSON",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ElephantFromJSON",
+  "parent":{
+    "name":"An elephant never forgets",
+    "path":"folders/Elephant/(System)/An elephant never forgets.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }
